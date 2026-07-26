@@ -8,15 +8,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Clonar y compilar directo
+      - name: Clonar repositorio
         run: |
           git clone https://github.com/${{ github.repository }}.git .
+
+      - name: Instalar Java, Android SDK y Bubblewrap
+        run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk
+          sudo apt-get install -y openjdk-17-jdk wget unzip
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          
+          # Instalar herramientas de Bubblewrap globalmente sin preguntas
           npm install -g @bubblewrap/cli
-          bubblewrap init --manifest=https://yorditv-mz4s.vercel.app/manifest.json --directory=android-app --skip=androidManifest
-          cd android-app
+          
+          # Construir usando una carpeta de trabajo limpia
+          mkdir android-app && cd android-app
+          
+          # Forzar la creación no interactiva con los datos de tu Vercel
+          bubblewrap init --manifest=https://yorditv-mz4s.vercel.app/manifest.json --skip=androidManifest
+          
+          # Compilar el APK de una vez
           bubblewrap build
 
       - name: Subir APK generado
