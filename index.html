@@ -1,330 +1,249 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YORDITV - Tu Plataforma Privada</title>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YordiTV - Películas</title>
+  
+  <style>
+    /* ==========================================
+       ESTILOS GENERALES (TEMA OSCURO TIPO NETFLIX)
+       ========================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            background-color: #080808;
-            color: #ffffff;
-            margin-top: 80px;
-        }
+    body {
+      background-color: #141414;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
 
-        /* Encabezado adaptable */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            background-color: rgba(8, 8, 8, 0.95);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 2px solid #B8860B;
-            box-shadow: 0 4px 10px rgba(184, 134, 11, 0.2);
-        }
+    header {
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #e50914;
+    }
 
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+    header h1 {
+      color: #e50914;
+      font-size: 32px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
-        nav a {
-            color: #d1d1d1;
-            text-decoration: none;
-            margin-left: 15px;
-            font-size: 16px;
-            transition: 0.3s;
-            font-weight: 500;
-        }
+    /* ==========================================
+       GRID Y TARJETAS DE PELÍCULAS
+       ========================================== */
+    .catalog {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        nav a:hover {
-            color: #FFD700;
-            text-shadow: 0 0 15px #FFD700;
-        }
+    .movie-card {
+      background-color: #1f1f1f;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-        /* BANNER PRINCIPAL */
-        .hero {
-            min-height: 40vh;
-            background-color: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            border-bottom: 2px solid #333;
-            text-align: center;
-        }
+    .movie-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+    }
 
-        .estreno-tag {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #FFD700;
-            color: #000;
-            padding: 6px 12px;
-            font-weight: bold;
-            border-radius: 5px;
-            font-size: 12px;
-            letter-spacing: 1px;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-        }
+    .poster-container {
+      width: 100%;
+      height: 320px;
+      background-color: #000;
+      overflow: hidden;
+    }
 
-        .hero h2 {
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            color: #FFD700;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
+    .poster-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-        /* Secciones */
-        .section-title {
-            font-size: clamp(20px, 3vw, 28px);
-            margin: 30px 5% 20px 5%;
-            color: #FFD700;
-            border-left: 5px solid #FFD700;
-            padding-left: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        }
+    .movie-info {
+      padding: 15px;
+      text-align: center;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
 
-        /* Grid adaptativo para Celular y Smart TV */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 20px;
-            padding: 0 5% 50px 5%;
-        }
+    .movie-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
 
-        @media (min-width: 768px) {
-            .grid-container {
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                gap: 30px;
-            }
-            .logo { font-size: 36px; }
-            nav a { font-size: 18px; margin-left: 25px; }
-        }
+    .btn-play {
+      background-color: #e50914;
+      color: #ffffff;
+      border: none;
+      padding: 12px 15px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      text-transform: uppercase;
+      transition: background-color 0.2s ease;
+    }
 
-        .card {
-            background-color: #121212;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #222;
-            transition: 0.3s ease-in-out;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
+    .btn-play:hover {
+      background-color: #f40612;
+    }
 
-        .card:hover, .card:focus {
-            transform: translateY(-8px) scale(1.04);
-            border: 2px solid #FFD700;
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
-            outline: none;
-        }
+    /* ==========================================
+       MODAL Y BOTÓN DE CIERRE "X"
+       ========================================== */
+    .movie-modal {
+      display: none; /* Oculto por defecto */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.95);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .card-content {
-            aspect-ratio: 2 / 3;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #1a1a1a;
-            overflow: hidden;
-        }
+    .movie-container {
+      position: relative;
+      width: 90%;
+      max-width: 960px;
+      aspect-ratio: 16 / 9;
+      background-color: #000;
+      border-radius: 8px;
+      box-shadow: 0 0 30px rgba(229, 9, 20, 0.5);
+    }
 
-        .card-content img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    /* Botón X gigante arriba a la derecha */
+    .btn-close-movie {
+      position: absolute;
+      top: -45px;
+      right: 0;
+      background-color: #e50914;
+      color: #ffffff;
+      border: none;
+      font-size: 22px;
+      font-weight: bold;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      transition: transform 0.2s, background-color 0.2s;
+    }
 
-        .card-title {
-            padding: 12px 10px;
-            font-size: 14px;
-            text-align: center;
-            color: #fff;
-            font-weight: bold;
-            background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0.9) 80%);
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
-        }
+    .btn-close-movie:hover {
+      background-color: #ff2a2a;
+      transform: scale(1.15);
+    }
 
-        /* REPRODUCTOR FLOTANTE ADAPTABLE */
-        .player-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding: 10px;
-        }
-
-        .player-container {
-            width: 95%;
-            max-width: 960px;
-            background: #000;
-            border: 2px solid #FFD700;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            position: relative;
-        }
-
-        .video-box {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            position: relative;
-            background: #000;
-        }
-
-        .video-box iframe, .video-box video {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: -45px;
-            right: 0;
-            color: #FFD700;
-            font-size: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 2100;
-            transition: 0.2s;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2px 12px;
-            border-radius: 6px;
-            border: 1px solid #FFD700;
-        }
-
-        .close-btn:hover {
-            color: #FFF;
-            transform: scale(1.1);
-        }
-
-        .movie-info-title {
-            padding: 12px;
-            color: #FFD700;
-            font-size: 18px;
-            text-align: center;
-            background: #111;
-            font-weight: bold;
-        }
-    </style>
+    .movie-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Menú Superior -->
-    <header>
-        <div class="logo">YORDITV</div>
-        <nav>
-            <a href="#peliculas">Películas</a>
-            <a href="#series">Series</a>
-            <a href="#comiquitas">Comiquitas</a>
-        </nav>
-    </header>
+  <header>
+    <h1>YordiTV</h1>
+  </header>
 
-    <!-- BANNER PRINCIPAL -->
-    <div class="hero">
-        <span class="estreno-tag">🔥 BIENVENIDO A YORDITV</span>
-        <h2>Catálogo Privado de Streaming</h2>
-        <p style="color: #aaa;">Selecciona una película de la lista para empezar a reproducir.</p>
+  <!-- CATÁLOGO COMPLETO -->
+  <main class="catalog">
+    
+    <!-- PELÍCULA 1 -->
+    <div class="movie-card">
+      <div class="poster-container">
+        <img src="https://img.youtube.com/vi/KaQmKVoBPgM/hqdefault.jpg" alt="Nunca Abandonó La Lucha">
+      </div>
+      <div class="movie-info">
+        <h2 class="movie-title">Nunca Abandonó La Lucha</h2>
+        <button class="btn-play" onclick="openMovie('https://www.youtube.com/embed/KaQmKVoBPgM?autoplay=1')">
+          ▶ Reproducir
+        </button>
+      </div>
     </div>
 
-    <!-- SECCIÓN PELÍCULAS -->
-    <h2 class="section-title" id="peliculas">Catálogo de Películas</h2>
-    <div class="grid-container" id="pelisGrid">
-
-        <!-- Película 1 -->
-        <div class="card" tabindex="0" onclick="reproducirPelicula('Sintel', 'https://www.youtube.com/embed/xEiLU9LeMnA?si=NE06sYwYGa5iK0NB')">
-            <div class="card-content">
-                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Sintel">
-            </div>
-            <div class="card-title">Sintel</div>
-        </div>
-
-        <!-- Película 2 -->
-        <div class="card" tabindex="0" onclick="reproducirPelicula('Tears of Steel', 'https://www.youtube.com/embed/q-xVBL8zRL4?si=hH7VTHb1CNIyT2Rr')">
-            <div class="card-content">
-                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Tears of Steel">
-            </div>
-            <div class="card-title">Tears of Steel</div>
-        </div>
-
-        <!-- Película 3 -->
-        <div class="card" tabindex="0" onclick="reproducirPelicula('Falcon Rising (Favela)', 'https://www.youtube.com/embed/Dt0s95_C1MQ?si=O4GhZgg-nKn7Ul0R')">
-            <div class="card-content">
-                <img src="https://img.youtube.com/vi/Dt0s95_C1MQ/hqdefault.jpg" alt="Falcon Rising">
-            </div>
-            <div class="card-title">Falcon Rising</div>
-        </div>
-
+    <!-- PELÍCULA 2 -->
+    <div class="movie-card">
+      <div class="poster-container">
+        <img src="https://img.youtube.com/vi/mG4b9B3z_xI/hqdefault.jpg" alt="El Rey de la Montaña">
+      </div>
+      <div class="movie-info">
+        <h2 class="movie-title">El Rey de la Montaña</h2>
+        <button class="btn-play" onclick="openMovie('https://www.youtube.com/embed/mG4b9B3z_xI?autoplay=1')">
+          ▶ Reproducir
+        </button>
+      </div>
     </div>
 
-    <!-- REPRODUCTOR FLOTANTE EN YORDITV -->
-    <div id="playerModal" class="player-modal">
-        <div class="player-container">
-            <span class="close-btn" onclick="cerrarReproductor()">&times; CERRAR</span>
-            <div id="videoBox" class="video-box"></div>
-            <div id="movieTitle" class="movie-info-title">Cargando...</div>
-        </div>
+  </main>
+
+  <!-- VENTANA DEL REPRODUCTOR POP-UP CON LA "X" -->
+  <div id="movieModal" class="movie-modal">
+    <div class="movie-container">
+      <!-- BOTÓN X PARA CERRAR LA PELÍCULA -->
+      <button class="btn-close-movie" onclick="closeMovie()" title="Cerrar película">✕</button>
+      
+      <!-- REPRODUCTOR -->
+      <iframe id="movieIframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
     </div>
+  </div>
 
-    <script>
-        function reproducirPelicula(titulo, urlVideo) {
-            var modal = document.getElementById('playerModal');
-            var videoBox = document.getElementById('videoBox');
-            var movieTitle = document.getElementById('movieTitle');
+  <!-- LÓGICA JAVASCRIPT -->
+  <script>
+    function openMovie(url) {
+      const modal = document.getElementById('movieModal');
+      const iframe = document.getElementById('movieIframe');
+      
+      iframe.src = url;
+      modal.style.display = 'flex';
+    }
 
-            movieTitle.innerText = titulo;
+    function closeMovie() {
+      const modal = document.getElementById('movieModal');
+      const iframe = document.getElementById('movieIframe');
+      
+      // Limpia la URL para apagar el video/audio inmediatamente
+      iframe.src = '';
+      modal.style.display = 'none';
+    }
 
-            if (urlVideo.endsWith('.mp4')) {
-                videoBox.innerHTML = '<video controls autoplay style="width:100%; height:100%; background:#000;"><source src="' + urlVideo + '" type="video/mp4">Tu navegador no soporta este video.</video>';
-            } else {
-                videoBox.innerHTML = '<iframe src="' + urlVideo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>';
-            }
-            
-            modal.style.display = 'flex';
-        }
-
-        function cerrarReproductor() {
-            var modal = document.getElementById('playerModal');
-            var videoBox = document.getElementById('videoBox');
-            videoBox.innerHTML = ''; 
-            modal.style.display = 'none';
-        }
-    </script>
+    // Permite cerrar la película presionando la tecla Escape (ESC)
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeMovie();
+      }
+    });
+  </script>
 
 </body>
 </html>
