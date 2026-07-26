@@ -8,14 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar repositorio
-        uses: actions/checkout@v4
-
-      - name: Instalar Java y Bubblewrap de una vez
+      - name: Clonar y compilar directo
         run: |
+          git clone https://github.com/${{ github.repository }}.git .
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
-          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
           npm install -g @bubblewrap/cli
           bubblewrap init --manifest=https://yorditv-mz4s.vercel.app/manifest.json --directory=android-app --skip=androidManifest
           cd android-app
