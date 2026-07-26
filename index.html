@@ -1,306 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YORDITV - Tu Plataforma Privada</title>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YordiTV - Prueba de Video</title>
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        body {
-            background-color: #080808;
-            color: #ffffff;
-            margin-top: 80px;
-        }
+    h1 {
+      color: #e50914; /* Color estilo streaming / YordiTV */
+      margin-bottom: 20px;
+    }
 
-        /* Encabezado */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            background-color: rgba(8, 8, 8, 0.95);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 2px solid #B8860B;
-            box-shadow: 0 4px 10px rgba(184, 134, 11, 0.2);
-        }
+    .player-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
+      height: 0;
+      background-color: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    }
 
-        .logo {
-            font-size: 36px;
-            font-weight: bold;
-            background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        nav a {
-            color: #d1d1d1;
-            text-decoration: none;
-            margin-left: 25px;
-            font-size: 18px;
-            transition: 0.3s;
-            font-weight: 500;
-        }
-
-        nav a:hover {
-            color: #FFD700;
-            text-shadow: 0 0 15px #FFD700;
-        }
-
-        /* BANNER PRINCIPAL: PELÍCULA DESTACADA */
-        .hero {
-            height: 65vh;
-            background-color: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            border-bottom: 2px solid #333;
-        }
-
-        .estreno-tag {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: #FFD700;
-            color: #000;
-            padding: 6px 15px;
-            font-weight: bold;
-            border-radius: 5px;
-            font-size: 14px;
-            letter-spacing: 1px;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-        }
-
-        .hero-img {
-            max-width: 100%;
-            max-height: 45vh;
-            object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 0 35px rgba(255, 215, 0, 0.3);
-            border: 1px solid #B8860B;
-        }
-
-        .btn-play {
-            margin-top: 20px;
-            background: linear-gradient(45deg, #FFD700, #B8860B, #FFD700);
-            color: #000;
-            border: none;
-            padding: 16px 40px;
-            font-size: 22px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
-            transition: 0.3s ease-in-out;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            z-index: 10;
-        }
-
-        .btn-play:hover {
-            transform: scale(1.1) translateY(-3px);
-            background: linear-gradient(45deg, #FFF8DC, #FFD700, #FFF8DC);
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.9);
-        }
-
-        /* Secciones */
-        .section-title {
-            font-size: 30px;
-            margin: 50px 40px 25px 40px;
-            color: #FFD700;
-            border-left: 6px solid #FFD700;
-            padding-left: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 30px;
-            padding: 0 40px 50px 40px;
-        }
-
-        .card {
-            background-color: #121212;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #222;
-            transition: 0.4s ease-in-out;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
-
-        .card:hover {
-            transform: translateY(-12px) scale(1.05);
-            border: 2px solid #FFD700;
-            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.5);
-        }
-
-        .card-content {
-            height: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #1a1a1a;
-            overflow: hidden;
-        }
-
-        .card-content img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .card-title {
-            padding: 15px;
-            font-size: 16px;
-            text-align: center;
-            color: #fff;
-            font-weight: bold;
-            background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,1) 80%);
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
-
-        /* REPRODUCTOR INTEGRADO */
-        .player-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .player-container {
-            width: 90%;
-            max-width: 900px;
-            background: #000;
-            border: 2px solid #FFD700;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            position: relative;
-        }
-
-        .video-box {
-            width: 100%;
-            height: 480px;
-            position: relative;
-            background: #000;
-        }
-
-        .video-box iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            color: #FFD700;
-            font-size: 35px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 2100;
-            transition: 0.2s;
-        }
-
-        .close-btn:hover {
-            color: #FFF;
-            transform: scale(1.2);
-        }
-
-        .movie-info-title {
-            padding: 15px;
-            color: #FFD700;
-            font-size: 22px;
-            text-align: center;
-            background: #111;
-        }
-    </style>
+    .player-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Menú Superior -->
-    <header>
-        <div class="logo">YORDITV</div>
-        <nav>
-            <a href="#peliculas">Películas</a>
-            <a href="#series">Series</a>
-            <a href="#comiquitas">Comiquitas</a>
-        </nav>
-    </header>
+  <h1>YordiTV - Módulo de Prueba</h1>
 
-    <!-- BANNER PRINCIPAL: PELÍCULA DESTACADA -->
-    <div class="hero">
-        <span class="estreno-tag">🔥 PRÓXIMO ESTRENO</span>
-        <img class="hero-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='100%' height='100%' fill='%23080808'/><rect x='10' y='10' width='780' height='430' fill='none' stroke='%23FFD700' stroke-width='2'/><text x='50%' y='40%' font-family='Arial' font-size='50' font-weight='bold' fill='%23FFD700' text-anchor='middle'>YORDITV PELÍCULAS</text><text x='50%' y='55%' font-family='Arial' font-size='24' fill='%23FFFFFF' text-anchor='middle' letter-spacing='3'>LISTO PARA CONTENIDO NUEVO</text></svg>" alt="Poster Estreno">
-        <button class="btn-play" onclick="alert('Envía los enlaces para activarlo.')">▶ Ver Estreno</button>
-    </div>
-
-    <!-- SECCIÓN PELÍCULAS -->
-    <h2 class="section-title" id="peliculas">Catálogo de Películas</h2>
-    <div class="grid-container" id="gridPeliculas">
-        <!-- Aquí se agregarán automáticamente tus 3 películas -->
-    </div>
-
-    <!-- REPRODUCTOR FLOTANTE EN YORDITV -->
-    <div id="playerModal" class="player-modal">
-        <span class="close-btn" onclick="cerrarReproductor()">&times; X</span>
-        <div class="player-container">
-            <div id="videoBox" class="video-box"></div>
-            <div id="movieTitle" class="movie-info-title">Cargando película...</div>
-        </div>
-    </div>
-
-    <script>
-        function reproducirPelicula(titulo, urlEmbed) {
-            var modal = document.getElementById('playerModal');
-            var videoBox = document.getElementById('videoBox');
-            var movieTitle = document.getElementById('movieTitle');
-
-            movieTitle.innerText = titulo;
-            videoBox.innerHTML = '<iframe src="' + urlEmbed + '" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
-            modal.style.display = 'flex';
-        }
-
-        function cerrarReproductor() {
-            var modal = document.getElementById('playerModal');
-            var videoBox = document.getElementById('videoBox');
-            videoBox.innerHTML = ''; 
-            modal.style.display = 'none';
-        }
-    </script>
+  <div class="player-container">
+    <iframe 
+      src="https://www.youtube.com/embed/xEiLU9LeMnA?si=pdgHWX_q-BvbSOoh" 
+      title="YouTube video player" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin" 
+      allowfullscreen>
+    </iframe>
+  </div>
 
 </body>
 </html>
