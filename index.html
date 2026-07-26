@@ -19,12 +19,12 @@
             margin-top: 80px;
         }
 
-        /* Encabezado */
+        /* Encabezado adaptable */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
+            padding: 15px 5%;
             background-color: rgba(8, 8, 8, 0.95);
             position: fixed;
             width: 100%;
@@ -35,7 +35,7 @@
         }
 
         .logo {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: bold;
             background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700);
             -webkit-background-clip: text;
@@ -48,8 +48,8 @@
         nav a {
             color: #d1d1d1;
             text-decoration: none;
-            margin-left: 25px;
-            font-size: 18px;
+            margin-left: 15px;
+            font-size: 16px;
             transition: 0.3s;
             font-weight: 500;
         }
@@ -61,7 +61,7 @@
 
         /* BANNER PRINCIPAL */
         .hero {
-            height: 60vh;
+            min-height: 40vh;
             background-color: #000;
             display: flex;
             flex-direction: column;
@@ -77,20 +77,20 @@
 
         .estreno-tag {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             background: #FFD700;
             color: #000;
-            padding: 6px 15px;
+            padding: 6px 12px;
             font-weight: bold;
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 12px;
             letter-spacing: 1px;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
         }
 
         .hero h2 {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
             color: #FFD700;
             margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
@@ -98,21 +98,31 @@
 
         /* Secciones */
         .section-title {
-            font-size: 30px;
-            margin: 50px 40px 25px 40px;
+            font-size: clamp(20px, 3vw, 28px);
+            margin: 30px 5% 20px 5%;
             color: #FFD700;
-            border-left: 6px solid #FFD700;
-            padding-left: 20px;
+            border-left: 5px solid #FFD700;
+            padding-left: 15px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
 
+        /* Grid adaptativo para Celular y Smart TV */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 30px;
-            padding: 0 40px 50px 40px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 0 5% 50px 5%;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 30px;
+            }
+            .logo { font-size: 36px; }
+            nav a { font-size: 18px; margin-left: 25px; }
         }
 
         .card {
@@ -120,20 +130,22 @@
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid #222;
-            transition: 0.4s ease-in-out;
+            transition: 0.3s ease-in-out;
             cursor: pointer;
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
 
-        .card:hover {
-            transform: translateY(-12px) scale(1.05);
+        .card:hover, .card:focus {
+            transform: translateY(-8px) scale(1.04);
             border: 2px solid #FFD700;
-            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
+            outline: none;
         }
 
         .card-content {
-            height: 320px;
+            aspect-ratio: 2 / 3;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -148,19 +160,19 @@
         }
 
         .card-title {
-            padding: 15px;
-            font-size: 16px;
+            padding: 12px 10px;
+            font-size: 14px;
             text-align: center;
             color: #fff;
             font-weight: bold;
-            background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,1) 80%);
+            background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0.9) 80%);
             position: absolute;
             bottom: 0;
             width: 100%;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
         }
 
-        /* REPRODUCTOR FLOTANTE */
+        /* REPRODUCTOR FLOTANTE ADAPTABLE */
         .player-modal {
             display: none;
             position: fixed;
@@ -173,11 +185,12 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            padding: 10px;
         }
 
         .player-container {
-            width: 90%;
-            max-width: 900px;
+            width: 95%;
+            max-width: 960px;
             background: #000;
             border: 2px solid #FFD700;
             border-radius: 12px;
@@ -188,7 +201,7 @@
 
         .video-box {
             width: 100%;
-            height: 480px;
+            aspect-ratio: 16 / 9;
             position: relative;
             background: #000;
         }
@@ -201,27 +214,32 @@
 
         .close-btn {
             position: absolute;
-            top: 15px;
-            right: 20px;
+            top: -45px;
+            right: 0;
             color: #FFD700;
-            font-size: 35px;
+            font-size: 30px;
             font-weight: bold;
             cursor: pointer;
             z-index: 2100;
             transition: 0.2s;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 12px;
+            border-radius: 6px;
+            border: 1px solid #FFD700;
         }
 
         .close-btn:hover {
             color: #FFF;
-            transform: scale(1.2);
+            transform: scale(1.1);
         }
 
         .movie-info-title {
-            padding: 15px;
+            padding: 12px;
             color: #FFD700;
-            font-size: 22px;
+            font-size: 18px;
             text-align: center;
             background: #111;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -249,19 +267,35 @@
     <div class="grid-container" id="pelisGrid">
 
         <!-- Película 1 -->
-        <div class="card" onclick="reproducirPelicula('Película 1', 'https://www.youtube.com/embed/xEiLU9LeMnA?si=NE06sYwYGa5iK0NB')">
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Sintel', 'https://www.youtube.com/embed/xEiLU9LeMnA?si=NE06sYwYGa5iK0NB')">
             <div class="card-content">
-                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Película 1">
+                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Sintel">
             </div>
-            <div class="card-title">Película 1</div>
+            <div class="card-title">Sintel</div>
+        </div>
+
+        <!-- Película 2 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Tears of Steel', 'https://www.youtube.com/embed/q-xVBL8zRL4?si=hH7VTHb1CNIyT2Rr')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Tears of Steel">
+            </div>
+            <div class="card-title">Tears of Steel</div>
+        </div>
+
+        <!-- Película 3 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Falcon Rising (Favela)', 'https://www.youtube.com/embed/Dt0s95_C1MQ?si=O4GhZgg-nKn7Ul0R')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/Dt0s95_C1MQ/hqdefault.jpg" alt="Falcon Rising">
+            </div>
+            <div class="card-title">Falcon Rising</div>
         </div>
 
     </div>
 
     <!-- REPRODUCTOR FLOTANTE EN YORDITV -->
     <div id="playerModal" class="player-modal">
-        <span class="close-btn" onclick="cerrarReproductor()">&times; X</span>
         <div class="player-container">
+            <span class="close-btn" onclick="cerrarReproductor()">&times; CERRAR</span>
             <div id="videoBox" class="video-box"></div>
             <div id="movieTitle" class="movie-info-title">Cargando...</div>
         </div>
