@@ -217,7 +217,7 @@
             background: #000;
         }
 
-        .video-box iframe {
+        .video-box iframe, .video-box video {
             width: 100%;
             height: 100%;
             border: none;
@@ -263,15 +263,47 @@
 
     <!-- BANNER PRINCIPAL: PELÍCULA DESTACADA -->
     <div class="hero">
-        <span class="estreno-tag">🔥 PRÓXIMO ESTRENO</span>
-        <img class="hero-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='100%' height='100%' fill='%23080808'/><rect x='10' y='10' width='780' height='430' fill='none' stroke='%23FFD700' stroke-width='2'/><text x='50%' y='40%' font-family='Arial' font-size='50' font-weight='bold' fill='%23FFD700' text-anchor='middle'>YORDITV PELÍCULAS</text><text x='50%' y='55%' font-family='Arial' font-size='24' fill='%23FFFFFF' text-anchor='middle' letter-spacing='3'>LISTO PARA CONTENIDO NUEVO</text></svg>" alt="Poster Estreno">
-        <button class="btn-play" onclick="alert('Envía los enlaces para activarlo.')">▶ Ver Estreno</button>
+        <span class="estreno-tag">🔥 PELÍCULA ESTRENO</span>
+        <img class="hero-img" src="https://image.tmdb.org/t/p/original/628M29I1L9R38L8L93K12.jpg" onerror="this.src='https://via.placeholder.com/800x450/111/FFD700?text=YORDITV+PELICULAS'" alt="Poster Estreno">
+        <button class="btn-play" onclick="reproducirPelicula('Sintel - Película de Prueba HD', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4')">▶ Ver Película</button>
     </div>
 
     <!-- SECCIÓN PELÍCULAS -->
     <h2 class="section-title" id="peliculas">Catálogo de Películas</h2>
-    <div class="grid-container" id="gridPeliculas">
-        <!-- Aquí se agregarán automáticamente tus 3 películas -->
+    <div class="grid-container">
+
+        <!-- Tu Video de YouTube Integrado -->
+        <div class="card" onclick="reproducirPelicula('Video de Prueba YouTube', 'https://www.youtube.com/embed/xEiLU9LeMnA?si=pdgHWX_q-BvbSOoh')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Video YouTube">
+            </div>
+            <div class="card-title">Video Prueba (YouTube)</div>
+        </div>
+
+        <!-- Película 1 -->
+        <div class="card" onclick="reproducirPelicula('Sintel (HD)', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4')">
+            <div class="card-content">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Sintel_poster.jpg" alt="Sintel">
+            </div>
+            <div class="card-title">Sintel</div>
+        </div>
+
+        <!-- Película 2 -->
+        <div class="card" onclick="reproducirPelicula('Tears of Steel (Sci-Fi)', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4')">
+            <div class="card-content">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/Tears_of_Steel_poster.jpg" alt="Tears of Steel">
+            </div>
+            <div class="card-title">Tears of Steel</div>
+        </div>
+
+        <!-- Película 3 -->
+        <div class="card" onclick="reproducirPelicula('Big Buck Bunny (Animación)', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
+            <div class="card-content">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.b3.jpg" alt="Big Buck Bunny">
+            </div>
+            <div class="card-title">Big Buck Bunny</div>
+        </div>
+
     </div>
 
     <!-- REPRODUCTOR FLOTANTE EN YORDITV -->
@@ -279,18 +311,26 @@
         <span class="close-btn" onclick="cerrarReproductor()">&times; X</span>
         <div class="player-container">
             <div id="videoBox" class="video-box"></div>
-            <div id="movieTitle" class="movie-info-title">Cargando película...</div>
+            <div id="movieTitle" class="movie-info-title">Cargando...</div>
         </div>
     </div>
 
     <script>
-        function reproducirPelicula(titulo, urlEmbed) {
+        function reproducirPelicula(titulo, urlVideo) {
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
             var movieTitle = document.getElementById('movieTitle');
 
             movieTitle.innerText = titulo;
-            videoBox.innerHTML = '<iframe src="' + urlEmbed + '" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+
+            // Si es un enlace mp4 directo
+            if (urlVideo.endsWith('.mp4')) {
+                videoBox.innerHTML = '<video controls autoplay style="width:100%; height:100%; background:#000;"><source src="' + urlVideo + '" type="video/mp4">Tu navegador no soporta este video.</video>';
+            } else {
+                // Para enlaces iframe como YouTube / Vimeo
+                videoBox.innerHTML = '<iframe src="' + urlVideo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>';
+            }
+            
             modal.style.display = 'flex';
         }
 
