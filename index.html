@@ -3,266 +3,422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YORDITV</title>
+    <title>YORDITV - Tu Plataforma Privada</title>
+    
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         body {
-            background-color: #141414;
+            background-color: #080808;
             color: #ffffff;
-            padding-bottom: 40px;
+            margin-top: 80px;
         }
+
+        /* Encabezado adaptable */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background-color: #000000;
-            position: sticky;
+            padding: 15px 5%;
+            background-color: rgba(8, 8, 8, 0.95);
+            position: fixed;
+            width: 100%;
             top: 0;
             z-index: 1000;
+            border-bottom: 2px solid #B8860B;
+            box-shadow: 0 4px 10px rgba(184, 134, 11, 0.2);
         }
+
         .logo {
-            color: #e50914;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            letter-spacing: 1px;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
-        .search-container {
-            flex-grow: 1;
-            max-width: 400px;
-            margin: 0 20px;
-        }
-        .search-box {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 4px;
-            border: 1px solid #333;
-            background-color: #222;
-            color: #fff;
-            font-size: 14px;
-        }
-        .search-box:focus {
-            outline: none;
-            border-color: #e50914;
-        }
-        /* ESTRENO (Cuadro superior fijo) */
-        .hero {
-            position: relative;
-            width: 100%;
-            height: 450px;
-            background: linear-gradient(to top, #141414, transparent), url('ENLACE_IMAGEN_ESTRENO_AQUI') no-repeat center center/cover;
-            display: flex;
-            align-items: flex-end;
-            padding: 30px;
-            margin-bottom: 20px;
-        }
-        .hero-content {
-            max-width: 600px;
-        }
-        .hero-tag {
-            background-color: #e50914;
-            color: white;
-            padding: 4px 10px;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 3px;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .hero h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-        .hero p {
-            font-size: 14px;
-            color: #ccc;
-            margin-bottom: 15px;
-        }
-        .btn-play {
-            background-color: #fff;
-            color: #000;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
+
+        nav a {
+            color: #d1d1d1;
             text-decoration: none;
-            display: inline-block;
+            margin-left: 15px;
+            font-size: 16px;
+            transition: 0.3s;
+            font-weight: 500;
         }
-        .btn-play:hover {
-            background-color: rgba(255, 255, 255, 0.75);
+
+        nav a:hover {
+            color: #FFD700;
+            text-shadow: 0 0 15px #FFD700;
         }
-        /* CATEGORÍAS Y FILAS */
-        .category-section {
-            padding: 15px 20px;
-        }
-        .category-title {
-            font-size: 20px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            border-left: 4px solid #e50914;
-            padding-left: 10px;
-        }
-        .movie-row {
+
+        /* BANNER PRINCIPAL */
+        .hero {
+            min-height: 40vh;
+            background-color: #000;
             display: flex;
-            overflow-x: auto;
-            gap: 15px;
-            padding-bottom: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: #e50914 #222;
-        }
-        .movie-row::-webkit-scrollbar {
-            height: 8px;
-        }
-        .movie-row::-webkit-scrollbar-thumb {
-            background-color: #e50914;
-            border-radius: 4px;
-        }
-        .movie-card {
-            min-width: 140px;
-            width: 140px;
-            background-color: #1f1f1f;
-            border-radius: 6px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
             overflow: hidden;
-            flex-shrink: 0;
-            transition: transform 0.2s;
+            border-bottom: 2px solid #333;
+            text-align: center;
+        }
+
+        .estreno-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #FFD700;
+            color: #000;
+            padding: 6px 12px;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        .hero h2 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: #FFD700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Secciones */
+        .section-title {
+            font-size: clamp(20px, 3vw, 28px);
+            margin: 30px 5% 20px 5%;
+            color: #FFD700;
+            border-left: 5px solid #FFD700;
+            padding-left: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Grid adaptativo para Celular y Smart TV */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 0 5% 50px 5%;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 30px;
+            }
+            .logo { font-size: 36px; }
+            nav a { font-size: 18px; margin-left: 25px; }
+        }
+
+        .card {
+            background-color: #121212;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #222;
+            transition: 0.3s ease-in-out;
             cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
-        .movie-card:hover {
-            transform: scale(1.05);
+
+        .card:hover, .card:focus {
+            transform: translateY(-8px) scale(1.04);
+            border: 2px solid #FFD700;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
+            outline: none;
         }
-        .movie-card img {
+
+        .card-content {
+            aspect-ratio: 2 / 3;
             width: 100%;
-            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .card-content img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
         }
-        .movie-info {
-            padding: 8px;
-            font-size: 12px;
+
+        .card-title {
+            padding: 12px 10px;
+            font-size: 14px;
             text-align: center;
-            white-space: nowrap;
+            color: #fff;
+            font-weight: bold;
+            background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0.9) 80%);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+        }
+
+        /* REPRODUCTOR FLOTANTE ADAPTABLE */
+        .player-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .player-container {
+            width: 95%;
+            max-width: 960px;
+            background: #000;
+            border: 2px solid #FFD700;
+            border-radius: 12px;
+            overflow: visible;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            position: relative;
+        }
+
+        .video-box {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            position: relative;
+            background: #000;
+            border-radius: 10px 10px 0 0;
             overflow: hidden;
-            text-overflow: ellipsis;
+        }
+
+        .video-box iframe, .video-box video {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* BOTÓN X DE CIERRE */
+        .close-btn {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            color: #FFD700;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2100;
+            transition: all 0.2s ease;
+            background: #e50914;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #FFD700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .close-btn:hover {
+            color: #FFFFFF;
+            background: #ff2a2a;
+            transform: scale(1.15);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        .movie-info-title {
+            padding: 12px;
+            color: #FFD700;
+            font-size: 18px;
+            text-align: center;
+            background: #111;
+            font-weight: bold;
+            border-radius: 0 0 10px 10px;
         }
     </style>
 </head>
 <body>
 
-    <!-- BARRA DE NAVEGACIÓN Y BÚSQUEDA -->
+    <!-- Menú Superior -->
     <header>
         <div class="logo">YORDITV</div>
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Buscar películas, series, comiquitas..." onkeyup="filtrarContenido()">
-        </div>
+        <nav>
+            <a href="#peliculas">Películas</a>
+            <a href="#series">Series</a>
+            <a href="#comiquitas">Comiquitas</a>
+        </nav>
     </header>
 
-    <!-- ESTRENO (CUADRO SUPERIOR FIJO - NO SE TOCA) -->
-    <div class="hero" style="background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80');">
-        <div class="hero-content">
-            <span class="hero-tag">ESTRENO DE LA SEMANA</span>
-            <h1>Título del Gran Estreno</h1>
-            <p>Aquí va la descripción corta del estreno principal que tienes montado arriba en la pantalla principal.</p>
-            <a href="ENLACE_DE_REPRODUCCION_ESTRENO" class="btn-play">▶ Ver Estreno</a>
-        </div>
+    <!-- BANNER PRINCIPAL -->
+    <div class="hero">
+        <span class="estreno-tag">🔥 BIENVENIDO A YORDITV</span>
+        <h2>Catálogo Privado de Streaming</h2>
+        <p style="color: #aaa;">Selecciona una película de la lista para empezar a reproducir.</p>
     </div>
 
-    <!-- CONTENEDOR DE CATEGORÍAS -->
-    <div id="categoriasContainer">
+    <!-- SECCIÓN PELÍCULAS -->
+    <h2 class="section-title" id="peliculas">Catálogo de Películas</h2>
+    <div class="grid-container" id="pelisGrid">
 
-        <!-- ACCIÓN -->
-        <div class="category-section" data-category="accion">
-            <div class="category-title">Películas de Acción</div>
-            <div class="movie-row">
-                <div class="movie-card" onclick="window.location.href='ENLACE_PELICULA'">
-                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80" alt="Acción 1">
-                    <div class="movie-info">Acción Extrema</div>
-                </div>
-                <div class="movie-card">
-                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=300&q=80" alt="Acción 2">
-                    <div class="movie-info">Furia en la Vía</div>
-                </div>
+        <!-- Película 1 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Sintel', 'https://www.youtube.com/embed/xEiLU9LeMnA?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Sintel">
             </div>
+            <div class="card-title">Sintel</div>
         </div>
 
-        <!-- TERROR -->
-        <div class="category-section" data-category="terror">
-            <div class="category-title">Películas de Terror</div>
-            <div class="movie-row">
-                <div class="movie-card">
-                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=300&q=80" alt="Terror 1">
-                    <div class="movie-info">La Sombra Oscura</div>
-                </div>
+        <!-- Película 2 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Tears of Steel', 'https://www.youtube.com/embed/q-xVBL8zRL4?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Tears of Steel">
             </div>
+            <div class="card-title">Tears of Steel</div>
         </div>
 
-        <!-- COMEDIA -->
-        <div class="category-section" data-category="comedia">
-            <div class="category-title">Películas de Comedia</div>
-            <div class="movie-row">
-                <div class="movie-card">
-                    <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=300&q=80" alt="Comedia 1">
-                    <div class="movie-info">Risas Garantizadas</div>
-                </div>
+        <!-- Película 3 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Falcon Rising', 'https://www.youtube.com/embed/Dt0s95_C1MQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/Dt0s95_C1MQ/hqdefault.jpg" alt="Falcon Rising">
             </div>
+            <div class="card-title">Falcon Rising</div>
         </div>
 
-        <!-- COMIQUITAS -->
-        <div class="category-section" data-category="comiquitas">
-            <div class="category-title">Comiquitas (Animadas)</div>
-            <div class="movie-row">
-                <div class="movie-card">
-                    <img src="https://images.unsplash.com/photo-1560942448-b8eddcc27cc4?auto=format&fit=crop&w=300&q=80" alt="Comiquita 1">
-                    <div class="movie-info">Aventuras Animadas</div>
-                </div>
+        <!-- Película 4 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Nunca Abandonó La Lucha', 'https://www.youtube.com/embed/KaQmKVoBPgM?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/KaQmKVoBPgM/hqdefault.jpg" alt="Nunca Abandonó La Lucha">
             </div>
+            <div class="card-title">Nunca Abandonó La Lucha</div>
         </div>
 
-        <!-- SERIES -->
-        <div class="category-section" data-category="series">
-            <div class="category-title">Series</div>
-            <div class="movie-row">
-                <div class="movie-card">
-                    <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=300&q=80" alt="Serie 1">
-                    <div class="movie-info">Serie Temporada 1</div>
-                </div>
+        <!-- Película 5 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Furia En La Ciudad', 'https://www.youtube.com/embed/ZSw20goyZ2w?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/ZSw20goyZ2w/hqdefault.jpg" alt="Furia En La Ciudad">
             </div>
+            <div class="card-title">Furia En La Ciudad</div>
         </div>
 
+        <!-- Película 6 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Operación Rescate', 'https://www.youtube.com/embed/L6n1bpEslXQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/L6n1bpEslXQ/hqdefault.jpg" alt="Operación Rescate">
+            </div>
+            <div class="card-title">Operación Rescate</div>
+        </div>
+
+        <!-- Película 7 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Código de Honor', 'https://www.youtube.com/embed/cIxsYRDENh4?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/cIxsYRDENh4/hqdefault.jpg" alt="Código de Honor">
+            </div>
+            <div class="card-title">Código de Honor</div>
+        </div>
+
+        <!-- Película 8 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Destino Final', 'https://www.youtube.com/embed/7PunLcZtuiI?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/7PunLcZtuiI/hqdefault.jpg" alt="Destino Final">
+            </div>
+            <div class="card-title">Destino Final</div>
+        </div>
+
+        <!-- Película 9 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Estreno Exclusivo', 'https://www.youtube.com/embed/d6ctQ-ftQTQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/d6ctQ-ftQTQ/hqdefault.jpg" alt="Estreno Exclusivo">
+            </div>
+            <div class="card-title">Estreno Exclusivo</div>
+        </div>
+
+        <!-- Película 10 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Gran Estreno', 'https://www.youtube.com/embed/Bykvb4SVspc?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/Bykvb4SVspc/hqdefault.jpg" alt="Gran Estreno">
+            </div>
+            <div class="card-title">Gran Estreno</div>
+        </div>
+
+        <!-- Película 11 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Mega Estreno', 'https://www.youtube.com/embed/L10tsbZpHVc?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/L10tsbZpHVc/hqdefault.jpg" alt="Mega Estreno">
+            </div>
+            <div class="card-title">Mega Estreno</div>
+        </div>
+
+        <!-- Película 12 (Nueva) -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Estreno Mundial', 'https://www.youtube.com/embed/iZDjW8mNmkk?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/iZDjW8mNmkk/hqdefault.jpg" alt="Estreno Mundial">
+            </div>
+            <div class="card-title">Estreno Mundial</div>
+        </div>
+
+    </div>
+
+    <!-- REPRODUCTOR FLOTANTE CON BOTÓN X -->
+    <div id="playerModal" class="player-modal">
+        <div class="player-container">
+            <!-- BOTÓN X SUPERIOR DERECHO -->
+            <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar película">✕</span>
+            
+            <div id="videoBox" class="video-box"></div>
+            <div id="movieTitle" class="movie-info-title">Cargando...</div>
+        </div>
     </div>
 
     <script>
-        // Función sencilla para el buscador en tiempo real
-        function filtrarContenido() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let secciones = document.querySelectorAll('.category-section');
+        function reproducirPelicula(titulo, urlVideo) {
+            var modal = document.getElementById('playerModal');
+            var videoBox = document.getElementById('videoBox');
+            var movieTitle = document.getElementById('movieTitle');
 
-            secciones.forEach(seccion => {
-                let tarjetas = seccion.querySelectorAll('.movie-card');
-                let hayCoincidencia = false;
+            movieTitle.innerText = titulo;
 
-                tarjetas.forEach(tarjeta => {
-                    let titulo = tarjeta.querySelector('.movie-info').innerText.toLowerCase();
-                    if (titulo.includes(input)) {
-                        tarjeta.style.display = "block";
-                        hayCoincidencia = true;
-                    } else {
-                        tarjeta.style.display = "none";
-                    }
-                });
-
-                // Si ninguna película de la categoría coincide, oculta toda la sección
-                if (hayCoincidencia || input === "") {
-                    seccion.style.display = "block";
-                } else {
-                    seccion.style.display = "none";
-                }
-            });
+            if (urlVideo.endsWith('.mp4')) {
+                videoBox.innerHTML = '<video controls autoplay style="width:100%; height:100%; background:#000;"><source src="' + urlVideo + '" type="video/mp4">Tu navegador no soporta este video.</video>';
+            } else {
+                videoBox.innerHTML = '<iframe src="' + urlVideo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>';
+            }
+            
+            modal.style.display = 'flex';
         }
+
+        function cerrarReproductor() {
+            var modal = document.getElementById('playerModal');
+            var videoBox = document.getElementById('videoBox');
+            
+            // Se quita el contenido para detener el video/audio
+            videoBox.innerHTML = ''; 
+            modal.style.display = 'none';
+        }
+
+        // Permite cerrar presionando la tecla ESC en computadoras
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarReproductor();
+            }
+        });
     </script>
+
 </body>
 </html>
