@@ -9,17 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clonar repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Compilar Web a APK con PWABuilder
-        uses: pwabuilder/pwabuilder-cli@main
+        uses: pwabuilder/pwabuilder-action@v2
         with:
           url: https://yorditv-mz4s.vercel.app
           name: YORDITV
           platform: android
 
       - name: Subir APK generado
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: output/android/
