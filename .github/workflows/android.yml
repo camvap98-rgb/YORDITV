@@ -10,12 +10,12 @@ jobs:
     steps:
       - name: Descargar herramientas
         uses: actions/checkout@v4
+        with:
+          node-version: '20'
 
-      - name: Instalar Bubblewrap CLI
-        run: npm i -g @bubblewrap/cli
-
-      - name: Generar APK con Android CLI
+      - name: Forzar Node 20 y compilar Bubblewrap
         run: |
+          npm install -g @bubblewrap/cli
           bubblewrap init --manifest=https://yorditv-mz4s.vercel.app/manifest.json --directory=android-app --skip=androidManifest
           cd android-app
           bubblewrap build
