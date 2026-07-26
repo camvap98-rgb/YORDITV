@@ -194,7 +194,7 @@
             background: #000;
             border: 2px solid #FFD700;
             border-radius: 12px;
-            overflow: visible; /* Permite que el botón X sobresalga sin cortarse */
+            overflow: visible;
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
             position: relative;
         }
@@ -214,7 +214,7 @@
             border: none;
         }
 
-        /* NUEVA X DE CIERRE DORADA Y ROJA EN LA ESQUINA */
+        /* BOTÓN X DE CIERRE */
         .close-btn {
             position: absolute;
             top: -45px;
@@ -301,9 +301,33 @@
             <div class="card-title">Falcon Rising</div>
         </div>
 
+        <!-- Película 4 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Nunca Abandonó La Lucha', 'https://www.youtube.com/embed/KaQmKVoBPgM?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/KaQmKVoBPgM/hqdefault.jpg" alt="Nunca Abandonó La Lucha">
+            </div>
+            <div class="card-title">Nunca Abandonó La Lucha</div>
+        </div>
+
+        <!-- Película 5 -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Película de Acción', 'https://www.youtube.com/embed/ZSw20goyZ2w?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/ZSw20goyZ2w/hqdefault.jpg" alt="Película de Acción">
+            </div>
+            <div class="card-title">Película de Acción</div>
+        </div>
+
+        <!-- Película 6 (Nueva) -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Nueva Película', 'https://www.youtube.com/embed/L6n1bpEslXQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/L6n1bpEslXQ/hqdefault.jpg" alt="Nueva Película">
+            </div>
+            <div class="card-title">Nueva Película</div>
+        </div>
+
     </div>
 
-    <!-- REPRODUCTOR FLOTANTE EN YORDITV CON BOTÓN X -->
+    <!-- REPRODUCTOR FLOTANTE CON BOTÓN X -->
     <div id="playerModal" class="player-modal">
         <div class="player-container">
             <!-- BOTÓN X SUPERIOR DERECHO -->
