@@ -1,0 +1,25 @@
+name: Generar APK de YORDITV
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Compilar Web a APK con PWABuilder
+        uses: pwabuilder/pwabuilder-cli@main
+        with:
+          url: https://yorditv-mz4s.vercel.app
+          name: YORDITV
+          platform: android
+
+      - name: Subir APK generado
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release
+          path: output/android/
