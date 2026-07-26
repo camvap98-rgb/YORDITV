@@ -50,7 +50,7 @@
             outline: none;
             border-color: #e50914;
         }
-        /* ESTRENO (Cuadro superior fijo - NO SE TOCA) */
+        /* ESTRENO (Cuadro superior fijo) */
         .hero {
             position: relative;
             width: 100%;
@@ -149,41 +149,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        /* MODAL PARA REPRODUCIR VIDEO */
-        #videoModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .modal-content {
-            width: 90%;
-            max-width: 800px;
-            aspect-ratio: 16/9;
-            position: relative;
-        }
-        .modal-content iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .close-btn {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            color: #fff;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -213,14 +178,13 @@
         <div class="category-section" data-category="accion">
             <div class="category-title">Películas de Acción</div>
             <div class="movie-row">
-                <!-- San Andreas 2 (Nueva Película) -->
-                <div class="movie-card" onclick="abrirVideo('https://www.youtube.com/embed/oHifEUtOHL0')">
-                    <img src="https://img.youtube.com/vi/oHifEUtOHL0/hqdefault.jpg" alt="San Andreas 2">
-                    <div class="movie-info">San Andreas 2</div>
+                <div class="movie-card" onclick="window.location.href='ENLACE_PELICULA'">
+                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80" alt="Acción 1">
+                    <div class="movie-info">Acción Extrema</div>
                 </div>
                 <div class="movie-card">
-                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80" alt="Acción 2">
-                    <div class="movie-info">Acción Extrema</div>
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=300&q=80" alt="Acción 2">
+                    <div class="movie-info">Furia en la Vía</div>
                 </div>
             </div>
         </div>
@@ -271,28 +235,8 @@
 
     </div>
 
-    <!-- REPRODUCTOR FLOTANTE (MODAL) -->
-    <div id="videoModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="cerrarVideo()">&times;</span>
-            <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-    </div>
-
     <script>
-        // Función para abrir el video dentro de la app sin salir de ella
-        function abrirVideo(url) {
-            document.getElementById('videoIframe').src = url;
-            document.getElementById('videoModal').style.display = 'flex';
-        }
-
-        // Función para cerrar el reproductor
-        function cerrarVideo() {
-            document.getElementById('videoIframe').src = '';
-            document.getElementById('videoModal').style.display = 'none';
-        }
-
-        // Buscador en tiempo real
+        // Función sencilla para el buscador en tiempo real
         function filtrarContenido() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             let secciones = document.querySelectorAll('.category-section');
@@ -311,6 +255,7 @@
                     }
                 });
 
+                // Si ninguna película de la categoría coincide, oculta toda la sección
                 if (hayCoincidencia || input === "") {
                     seccion.style.display = "block";
                 } else {
