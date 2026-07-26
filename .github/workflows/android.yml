@@ -2,24 +2,26 @@ name: Generar APK de YORDITV
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Clonar repositorio
+      - name: Descargar herramientas
         uses: actions/checkout@v4
 
-      - name: Compilar Web a APK con PWABuilder
-        uses: pwabuilder/pwabuilder-action@v2
-        with:
-          url: https://yorditv-mz4s.vercel.app
-          name: YORDITV
-          platform: android
+      - name: Instalar Bubblewrap CLI
+        run: npm i -g @bubblewrap/cli
+
+      - name: Generar APK con Android CLI
+        run: |
+          bubblewrap init --manifest=https://yorditv-mz4s.vercel.app/manifest.json --directory=android-app --skip=androidManifest
+          cd android-app
+          bubblewrap build
 
       - name: Subir APK generado
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: output/android/
+          path: android-app/app/build/outputs/apk/release/
