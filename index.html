@@ -32,6 +32,8 @@
             z-index: 1000;
             border-bottom: 2px solid #B8860B;
             box-shadow: 0 4px 10px rgba(184, 134, 11, 0.2);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .logo {
@@ -43,6 +45,30 @@
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
             letter-spacing: 2px;
             text-transform: uppercase;
+        }
+
+        /* BARRA DE BÚSQUEDA */
+        .search-container {
+            flex-grow: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-bar:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
         nav a {
@@ -113,7 +139,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
-            padding: 0 5% 50px 5%;
+            padding: 0 5% 30px 5%;
         }
 
         @media (min-width: 768px) {
@@ -256,11 +282,16 @@
 </head>
 <body>
 
-    <!-- Menú Superior -->
+    <!-- Menú Superior con Buscador -->
     <header>
         <div class="logo">YORDITV</div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series, comiquitas..." onkeyup="filtrarContenido()">
+        </div>
         <nav>
-            <a href="#peliculas">Películas</a>
+            <a href="#accion">Acción</a>
+            <a href="#comedia">Comedia</a>
+            <a href="#terror">Terror</a>
             <a href="#series">Series</a>
             <a href="#comiquitas">Comiquitas</a>
         </nav>
@@ -270,30 +301,13 @@
     <div class="hero">
         <span class="estreno-tag">🔥 BIENVENIDO A YORDITV</span>
         <h2>Catálogo Privado de Streaming</h2>
-        <p style="color: #aaa;">Selecciona una película de la lista para empezar a reproducir.</p>
+        <p style="color: #aaa;">Selecciona un contenido de la lista para empezar a reproducir.</p>
     </div>
 
-    <!-- SECCIÓN PELÍCULAS -->
-    <h2 class="section-title" id="peliculas">Catálogo de Películas</h2>
-    <div class="grid-container" id="pelisGrid">
+    <!-- SECCIÓN PELÍCULAS DE ACCIÓN -->
+    <h2 class="section-title" id="accion">Películas de Acción</h2>
+    <div class="grid-container">
 
-        <!-- Película 1 -->
-        <div class="card" tabindex="0" onclick="reproducirPelicula('Sintel', 'https://www.youtube.com/embed/xEiLU9LeMnA?autoplay=1')">
-            <div class="card-content">
-                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Sintel">
-            </div>
-            <div class="card-title">Sintel</div>
-        </div>
-
-        <!-- Película 2 -->
-        <div class="card" tabindex="0" onclick="reproducirPelicula('Tears of Steel', 'https://www.youtube.com/embed/q-xVBL8zRL4?autoplay=1')">
-            <div class="card-content">
-                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Tears of Steel">
-            </div>
-            <div class="card-title">Tears of Steel</div>
-        </div>
-
-        <!-- Película 3 -->
         <div class="card" tabindex="0" onclick="reproducirPelicula('Falcon Rising', 'https://www.youtube.com/embed/Dt0s95_C1MQ?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/Dt0s95_C1MQ/hqdefault.jpg" alt="Falcon Rising">
@@ -301,7 +315,6 @@
             <div class="card-title">Falcon Rising</div>
         </div>
 
-        <!-- Película 4 -->
         <div class="card" tabindex="0" onclick="reproducirPelicula('Nunca Abandonó La Lucha', 'https://www.youtube.com/embed/KaQmKVoBPgM?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/KaQmKVoBPgM/hqdefault.jpg" alt="Nunca Abandonó La Lucha">
@@ -309,7 +322,6 @@
             <div class="card-title">Nunca Abandonó La Lucha</div>
         </div>
 
-        <!-- Película 5 -->
         <div class="card" tabindex="0" onclick="reproducirPelicula('Furia En La Ciudad', 'https://www.youtube.com/embed/ZSw20goyZ2w?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/ZSw20goyZ2w/hqdefault.jpg" alt="Furia En La Ciudad">
@@ -317,7 +329,6 @@
             <div class="card-title">Furia En La Ciudad</div>
         </div>
 
-        <!-- Película 6 -->
         <div class="card" tabindex="0" onclick="reproducirPelicula('Operación Rescate', 'https://www.youtube.com/embed/L6n1bpEslXQ?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/L6n1bpEslXQ/hqdefault.jpg" alt="Operación Rescate">
@@ -325,7 +336,6 @@
             <div class="card-title">Operación Rescate</div>
         </div>
 
-        <!-- Película 7 -->
         <div class="card" tabindex="0" onclick="reproducirPelicula('Código de Honor', 'https://www.youtube.com/embed/cIxsYRDENh4?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/cIxsYRDENh4/hqdefault.jpg" alt="Código de Honor">
@@ -333,15 +343,19 @@
             <div class="card-title">Código de Honor</div>
         </div>
 
-        <!-- Película 8 -->
-        <div class="card" tabindex="0" onclick="reproducirPelicula('Destino Final', 'https://www.youtube.com/embed/7PunLcZtuiI?autoplay=1')">
+        <div class="card" tabindex="0" onclick="reproducirPelicula('BOYNE FALLS', 'https://www.youtube.com/embed/KyyYdImpiu8?autoplay=1')">
             <div class="card-content">
-                <img src="https://img.youtube.com/vi/7PunLcZtuiI/hqdefault.jpg" alt="Destino Final">
+                <img src="https://img.youtube.com/vi/KyyYdImpiu8/hqdefault.jpg" alt="BOYNE FALLS">
             </div>
-            <div class="card-title">Destino Final</div>
+            <div class="card-title">BOYNE FALLS</div>
         </div>
 
-        <!-- Película 9 -->
+    </div>
+
+    <!-- SECCIÓN PELÍCULAS DE COMEDIA -->
+    <h2 class="section-title" id="comedia">Películas de Comedia</h2>
+    <div class="grid-container">
+
         <div class="card" tabindex="0" onclick="reproducirPelicula('Estreno Exclusivo', 'https://www.youtube.com/embed/d6ctQ-ftQTQ?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/d6ctQ-ftQTQ/hqdefault.jpg" alt="Estreno Exclusivo">
@@ -349,7 +363,6 @@
             <div class="card-title">Estreno Exclusivo</div>
         </div>
 
-        <!-- Película 10 -->
         <div class="card" tabindex="0" onclick="reproducirPelicula('Gran Estreno', 'https://www.youtube.com/embed/Bykvb4SVspc?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/Bykvb4SVspc/hqdefault.jpg" alt="Gran Estreno">
@@ -357,7 +370,19 @@
             <div class="card-title">Gran Estreno</div>
         </div>
 
-        <!-- Película 11 -->
+    </div>
+
+    <!-- SECCIÓN PELÍCULAS DE TERROR -->
+    <h2 class="section-title" id="terror">Películas de Terror</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Destino Final', 'https://www.youtube.com/embed/7PunLcZtuiI?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/7PunLcZtuiI/hqdefault.jpg" alt="Destino Final">
+            </div>
+            <div class="card-title">Destino Final</div>
+        </div>
+
         <div class="card" tabindex="0" onclick="reproducirPelicula('Mega Estreno', 'https://www.youtube.com/embed/L10tsbZpHVc?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/L10tsbZpHVc/hqdefault.jpg" alt="Mega Estreno">
@@ -365,12 +390,37 @@
             <div class="card-title">Mega Estreno</div>
         </div>
 
-        <!-- Película 12 (Nueva) -->
+    </div>
+
+    <!-- SECCIÓN SERIES -->
+    <h2 class="section-title" id="series">Series</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Tears of Steel', 'https://www.youtube.com/embed/q-xVBL8zRL4?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Tears of Steel">
+            </div>
+            <div class="card-title">Tears of Steel</div>
+        </div>
+
         <div class="card" tabindex="0" onclick="reproducirPelicula('Estreno Mundial', 'https://www.youtube.com/embed/iZDjW8mNmkk?autoplay=1')">
             <div class="card-content">
                 <img src="https://img.youtube.com/vi/iZDjW8mNmkk/hqdefault.jpg" alt="Estreno Mundial">
             </div>
             <div class="card-title">Estreno Mundial</div>
+        </div>
+
+    </div>
+
+    <!-- SECCIÓN COMIQUITAS -->
+    <h2 class="section-title" id="comiquitas">Comiquitas</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Sintel', 'https://www.youtube.com/embed/xEiLU9LeMnA?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Sintel">
+            </div>
+            <div class="card-title">Sintel</div>
         </div>
 
     </div>
@@ -407,9 +457,23 @@
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
             
-            // Se quita el contenido para detener el video/audio
             videoBox.innerHTML = ''; 
             modal.style.display = 'none';
+        }
+
+        // Función de Búsqueda Dinámica
+        function filtrarContenido() {
+            var input = document.getElementById('searchInput').value.toLowerCase();
+            var cards = document.querySelectorAll('.card');
+
+            cards.forEach(function(card) {
+                var title = card.querySelector('.card-title').innerText.toLowerCase();
+                if (title.includes(input)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
         }
 
         // Permite cerrar presionando la tecla ESC en computadoras
