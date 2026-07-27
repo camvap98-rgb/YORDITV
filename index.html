@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YORDITV - Tu Plataforma Privada</title>
-    
+   
     <style>
         * {
             margin: 0;
@@ -17,6 +17,155 @@
             background-color: #080808;
             color: #ffffff;
             margin-top: 80px;
+        }
+
+        /* Pantalla de Autenticación / Registro / Pago / Suscripción */
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #080808;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .auth-card {
+            background: #121212;
+            border: 2px solid #FFD700;
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .auth-input:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .auth-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        .auth-switch {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #b1b1b1;
+            cursor: pointer;
+        }
+
+        .auth-switch span {
+            color: #FFD700;
+            text-decoration: underline;
+        }
+
+        /* Planes de Suscripción */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .plan-option {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .plan-option:hover, .plan-option.selected {
+            border-color: #FFD700;
+            background: #222;
+        }
+
+        .plan-option h3 {
+            color: #FFD700;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .plan-option p {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        /* Panel de Control de Suscripción flotante / Reloj */
+        .sub-status-bar {
+            background: #121212;
+            border-bottom: 1px solid #333;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sub-timer {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .renew-btn {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .renew-btn:hover {
+            background: #ffa500;
         }
 
         /* Encabezado adaptable */
@@ -138,7 +287,7 @@
             width: 100%;
             height: 100%;
             border: none;
-            pointer-events: none; /* Evita interacción para que actúe solo como tráiler estático */
+            pointer-events: none;
         }
 
         /* Secciones */
@@ -301,6 +450,66 @@
 </head>
 <body>
 
+    <!-- CAPA DE AUTENTICACIÓN, REGISTRO Y VALIDACIÓN DE PAGO -->
+    <div id="auth-overlay">
+        <!-- PASO 1: LOGIN / REGISTRO -->
+        <div id="auth-form-card" class="auth-card">
+            <h2 id="auth-title">YORDITV - Iniciar Sesión</h2>
+            <div id="auth-error" style="color: #ff4444; font-size: 13px; margin-bottom: 10px;"></div>
+            
+            <input type="email" id="auth-email" class="auth-input" placeholder="Correo electrónico">
+            <input type="password" id="auth-password" class="auth-input" placeholder="Contraseña">
+            
+            <div id="extra-fields" style="display: none;">
+                <p style="font-size: 13px; color: #FFD700; margin-top: 10px; text-align: left;">Selecciona tu Plan:</p>
+                <div class="plans-grid">
+                    <div class="plan-option" onclick="seleccionarPlan('basico', 3, '1 SmartTV y 1 Teléfono (2 pantallas)')">
+                        <h3>Plan Básico ($3)</h3>
+                        <p>1 SmartTV y 1 Teléfono (2 pantallas)</p>
+                    </div>
+                    <div class="plan-option" onclick="seleccionarPlan('pro', 6, '2 SmartTV y 2 Teléfonos (4 pantallas)')">
+                        <h3>Plan Pro ($6)</h3>
+                        <p>2 SmartTV y 2 Teléfonos (4 pantallas)</p>
+                    </div>
+                    <div class="plan-option" onclick="seleccionarPlan('ultra', 15, '4 SmartTV y 2 Teléfonos (6 pantallas)')">
+                        <h3>Plan Ultra + ($15)</h3>
+                        <p>4 SmartTV y 2 Teléfonos (6 pantallas)</p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="auth-submit-btn" class="auth-btn" onclick="manejarAuth()">Ingresar</button>
+            <div class="auth-switch" onclick="cambiarModoAuth()"><span id="auth-switch-text">¿No tienes cuenta? Regístrate aquí</span></div>
+        </div>
+
+        <!-- PASO 2: VERIFICACIÓN DE CÓDIGO POR CORREO -->
+        <div id="verify-card" class="auth-card" style="display: none;">
+            <h2>Verificar Correo</h2>
+            <p style="font-size: 13px; color: #ccc; margin-bottom: 15px;">Hemos enviado un código de verificación automático a tu correo electrónico.</p>
+            <input type="text" id="verify-code-input" class="auth-input" placeholder="Ingresa el código de 4 dígitos">
+            <button class="auth-btn" onclick="verificarCodigo()">Confirmar Código</button>
+        </div>
+
+        <!-- PASO 3: PANTALLA DE PAGO OBLIGATORIO -->
+        <div id="payment-card" class="auth-card" style="display: none;">
+            <h2>Activación de Suscripción</h2>
+            <p style="font-size: 14px; color: #fff; margin-bottom: 15px;" id="payment-plan-info">Plan seleccionado: --</p>
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px dashed #FFD700; text-align: left; font-size: 13px; margin-bottom: 15px;">
+                <p style="color: #FFD700; font-weight: bold; margin-bottom: 5px;">Datos para realizar el pago:</p>
+                <p>• Pago Móvil / Zelle / Binance Pay</p>
+                <p>• Monto exacto según tu plan.</p>
+                <p style="margin-top: 5px; color: #aaa;">Una vez reportado o realizado el pago, haz clic en confirmar para activar tu cuenta de inmediato.</p>
+            </div>
+            <button class="auth-btn" onclick="simularConfirmacionPago()">Ya pagué, Activar Cuenta</button>
+        </div>
+    </div>
+
+    <!-- BARRA DE ESTADO DE SUSCRIPCIÓN Y RELOJ -->
+    <div class="sub-status-bar" id="statusBar" style="display: none;">
+        <div>Cuenta Activa: <span id="userSessionEmail" style="color: #FFD700;"></span></div>
+        <div class="sub-timer">Tiempo restante: <span id="daysRemaining">30</span> días <button class="renew-btn" onclick="abrirRenovacion()">Renovar / Pagar Adelantado</button></div>
+    </div>
+
     <!-- Menú Superior con Buscador -->
     <header>
         <div class="logo">YORDITV</div>
@@ -312,13 +521,13 @@
             <a href="#comedia">Comedia</a>
             <a href="#terror">Terror</a>
             <a href="#series">Series</a>
-            <a href="#comiquitas">Comiquitas</a>
+            <a href="#comiquitas">Comiquitas</a> 
         </nav>
     </header>
 
     <!-- BANNER PRINCIPAL CON TRÁILER DE ESTRENO AUTOMÁTICO -->
     <div class="hero">
-        <span class="estreno-tag">🔥 GRAN ESTRENO EXCLUSIVO</span>
+        <span class="estreno-tag">GRAN ESTRENO EXCLUSIVO</span>
         <h2>Tráiler Oficial</h2>
         <div class="hero-trailer-container">
             <iframe src="https://www.youtube.com/embed/pqLSLoDkZWE?autoplay=1&mute=1&loop=1&playlist=pqLSLoDkZWE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -426,9 +635,9 @@
 
         <div class="card" tabindex="0" onclick="reproducirPelicula('Tears of Steel', 'https://www.youtube.com/embed/q-xVBL8zRL4?autoplay=1')">
             <div class="card-content">
-                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Tears of Steel">
+                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Lágrimas de acero">
             </div>
-            <div class="card-title">Tears of Steel</div>
+            <div class="card-title">Lágrimas de acero</div>
         </div>
 
         <div class="card" tabindex="0" onclick="reproducirPelicula('Estreno Mundial', 'https://www.youtube.com/embed/iZDjW8mNmkk?autoplay=1')">
@@ -486,13 +695,174 @@
         <div class="player-container">
             <!-- BOTÓN X SUPERIOR DERECHO -->
             <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar película">✕</span>
-            
+           
             <div id="videoBox" class="video-box"></div>
             <div id="movieTitle" class="movie-info-title">Cargando...</div>
         </div>
     </div>
 
     <script>
+        // Cuentas libres para ti y tu familia (10 cuentas predefinidas con acceso ilimitado gratis)
+        const cuentasLibres = [
+            "yordiperdomo@yorditv.com",
+            "familia1@yorditv.com",
+            "familia2@yorditv.com",
+            "familia3@yorditv.com",
+            "familia4@yorditv.com",
+            "familia5@yorditv.com",
+            "familia6@yorditv.com",
+            "familia7@yorditv.com",
+            "familia8@yorditv.com",
+            "familia9@yorditv.com"
+        ];
+
+        let modoRegistro = false;
+        let planSeleccionado = null;
+        let precioPlan = 0;
+        let detallesPlan = "";
+        let codigoAIEnviado = "";
+
+        // Control de Estado al Cargar la Página
+        window.onload = function() {
+            let sesionActiva = localStorage.getItem("yorditv_sesion");
+            if(sesionActiva) {
+                verificarAccesoConcedido(sesionActiva);
+            }
+        }
+
+        function cambiarModoAuth() {
+            modoRegistro = !modoRegistro;
+            document.getElementById("auth-error").innerText = "";
+            if(modoRegistro) {
+                document.getElementById("auth-title").innerText = "YORDITV - Registro";
+                document.getElementById("extra-fields").style.display = "block";
+                document.getElementById("auth-submit-btn").innerText = "Registrarse y Pagar";
+                document.getElementById("auth-switch-text").innerText = "¿Ya tienes cuenta? Inicia sesión";
+            } else {
+                document.getElementById("auth-title").innerText = "YORDITV - Iniciar Sesión";
+                document.getElementById("extra-fields").style.display = "none";
+                document.getElementById("auth-submit-btn").innerText = "Ingresar";
+                document.getElementById("auth-switch-text").innerText = "¿No tienes cuenta? Regístrate aquí";
+            }
+        }
+
+        function seleccionarPlan(tipo, precio, descripcion) {
+            planSeleccionado = tipo;
+            precioPlan = precio;
+            detallesPlan = descripcion;
+            document.querySelectorAll(".plan-option").forEach(el => el.classList.remove("selected"));
+            event.currentTarget.classList.add("selected");
+        }
+
+        function manejarAuth() {
+            let email = document.getElementById("auth-email").value.trim();
+            let pass = document.getElementById("auth-password").value.trim();
+            let errorBox = document.getElementById("auth-error");
+
+            if(!email || !pass) {
+                errorBox.innerText = "Por favor completa todos los campos.";
+                return;
+            }
+
+            // Si son cuentas libres de la familia
+            if(cuentasLibres.includes(email)) {
+                localStorage.setItem("yorditv_sesion", email);
+                localStorage.setItem("yorditv_dias_" + email, "999");
+                verificarAccesoConcedido(email);
+                return;
+            }
+
+            if(modoRegistro) {
+                if(!planSeleccionado) {
+                    errorBox.innerText = "Por favor selecciona un plan de suscripción.";
+                    return;
+                }
+                // Guardar datos temporales de registro
+                localStorage.setItem("temp_email", email);
+                localStorage.setItem("temp_pass", pass);
+                localStorage.setItem("temp_plan", planSeleccionado);
+
+                // Generar código automático simulando IA/Sistema
+                codigoAIEnviado = Math.floor(1000 + Math.random() * 9000).toString();
+                alert("[SIMULACIÓN CORREO AI]: Tu código de verificación YORDITV es: " + codigoAIEnviado);
+
+                // Pasar a pantalla de verificación
+                document.getElementById("auth-form-card").style.display = "none";
+                document.getElementById("verify-card").style.display = "block";
+            } else {
+                // Modo Login
+                let savedPass = localStorage.getItem("pass_" + email);
+                let diasRestantes = localStorage.getItem("yorditv_dias_" + email);
+
+                if(savedPass && savedPass === pass) {
+                    if(diasRestantes && parseInt(diasRestantes) > 0) {
+                        localStorage.setItem("yorditv_sesion", email);
+                        verificarAccesoConcedido(email);
+                    } else {
+                        // Si expiró, mandarlo directo a pagar
+                        localStorage.setItem("temp_email", email);
+                        document.getElementById("auth-form-card").style.display = "none";
+                        document.getElementById("payment-plan-info").innerText = "Tu suscripción ha expirado. Selecciona un plan o renueva.";
+                        document.getElementById("payment-card").style.display = "block";
+                    }
+                } else {
+                    errorBox.innerText = "Correo o contraseña incorrectos, o cuenta no registrada.";
+                }
+            }
+        }
+
+        function verificarCodigo() {
+            let codigoIngresado = document.getElementById("verify-code-input").value.trim();
+            if(codigoIngresado === codigoAIEnviado) {
+                document.getElementById("verify-card").style.display = "none";
+                document.getElementById("payment-plan-info").innerText = "Plan elegido: " + planSeleccionado.toUpperCase() + " — Monto a pagar: $" + precioPlan + " (" + detallesPlan + ")";
+                document.getElementById("payment-card").style.display = "block";
+            } else {
+                alert("Código incorrecto. Revisa el código simulado enviado.");
+            }
+        }
+
+        function simularConfirmacionPago() {
+            let email = localStorage.getItem("temp_email") || localStorage.getItem("yorditv_sesion");
+            let pass = localStorage.getItem("temp_pass");
+            if(pass) {
+                localStorage.setItem("pass_" + email, pass);
+            }
+            // Activar por 30 días iniciales
+            localStorage.setItem("yorditv_dias_" + email, "30");
+            localStorage.setItem("yorditv_sesion", email);
+            
+            document.getElementById("payment-card").style.display = "none";
+            verificarAccesoConcedido(email);
+        }
+
+        function verificarAccesoConcedido(email) {
+            let dias = localStorage.getItem("yorditv_dias_" + email);
+            if(!dias || parseInt(dias) <= 0) {
+                // Mostrar pantalla de pago si no tiene días activos
+                document.getElementById("auth-overlay").style.display = "flex";
+                document.getElementById("auth-form-card").style.display = "none";
+                document.getElementById("payment-card").style.display = "block";
+                document.getElementById("payment-plan-info").innerText = "Tu cuenta requiere el pago de la mensualidad para continuar.";
+                return;
+            }
+
+            // Ocultar overlay y mostrar plataforma y reloj
+            document.getElementById("auth-overlay").style.display = "none";
+            document.getElementById("statusBar").style.display = "flex";
+            document.getElementById("userSessionEmail").innerText = email;
+            document.getElementById("daysRemaining").innerText = dias === "999" ? "Ilimitados (Cuenta Familiar)" : dias;
+        }
+
+        function abrirRenovacion() {
+            let email = localStorage.getItem("yorditv_sesion");
+            document.getElementById("auth-overlay").style.display = "flex";
+            document.getElementById("auth-form-card").style.display = "none";
+            document.getElementById("verify-card").style.display = "none";
+            document.getElementById("payment-card").style.display = "block";
+            document.getElementById("payment-plan-info").innerText = "Renovación / Pago anticipado para mantener activa tu suscripción sin interrupciones.";
+        }
+
         function reproducirPelicula(titulo, urlVideo) {
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
@@ -505,15 +875,15 @@
             } else {
                 videoBox.innerHTML = '<iframe src="' + urlVideo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>';
             }
-            
+           
             modal.style.display = 'flex';
         }
 
         function cerrarReproductor() {
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
-            
-            videoBox.innerHTML = ''; 
+           
+            videoBox.innerHTML = '';
             modal.style.display = 'none';
         }
 
