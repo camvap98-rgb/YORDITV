@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,10 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -63,6 +67,7 @@
             color: #fff;
             font-size: 14px;
             outline: none;
+            user-select: text;
         }
 
         .auth-input:focus {
@@ -135,7 +140,7 @@
             color: #ccc;
         }
 
-        /* Panel de Control de Suscripción flotante / Reloj */
+        /* Panel de Control de Suscripción / Perfil y Botones */
         .sub-status-bar {
             background: #121212;
             border-bottom: 1px solid #333;
@@ -153,19 +158,115 @@
             font-weight: bold;
         }
 
-        .renew-btn {
-            background: #FFD700;
-            color: #000;
+        .action-btns-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .renew-btn, .profile-btn, .logout-btn {
             border: none;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
             font-size: 12px;
+            transition: 0.2s;
         }
 
-        .renew-btn:hover {
-            background: #ffa500;
+        .renew-btn {
+            background: #FFD700;
+            color: #000;
+        }
+        .renew-btn:hover { background: #ffa500; }
+
+        .profile-btn {
+            background: #333;
+            color: #FFD700;
+            border: 1px solid #FFD700;
+        }
+        .profile-btn:hover { background: #444; }
+
+        .logout-btn {
+            background: #e50914;
+            color: #fff;
+        }
+        .logout-btn:hover { background: #ff2a2a; }
+
+        /* Modal de Perfil */
+        .profile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background: #121212;
+            border: 2px solid #FFD700;
+            padding: 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .profile-card h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .profile-info-item {
+            margin-bottom: 12px;
+            font-size: 14px;
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+
+        .profile-info-item span {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        /* Botón Flotante de WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #25d366;
+            color: #FFF;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 35px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.5);
+            z-index: 2500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            background-color: #20ba5a;
         }
 
         /* Encabezado adaptable */
@@ -504,11 +605,32 @@
         </div>
     </div>
 
-    <!-- BARRA DE ESTADO DE SUSCRIPCIÓN Y RELOJ -->
-    <div class="sub-status-bar" id="statusBar" style="display: none;">
-        <div>Cuenta Activa: <span id="userSessionEmail" style="color: #FFD700;"></span></div>
-        <div class="sub-timer">Tiempo restante: <span id="daysRemaining">30</span> días <button class="renew-btn" onclick="abrirRenovacion()">Renovar / Pagar Adelantado</button></div>
+    <!-- MODAL DE PERFIL DE USUARIO -->
+    <div id="profileModal" class="profile-modal">
+        <div class="profile-card">
+            <h3>Mi Perfil YORDITV</h3>
+            <div class="profile-info-item">Correo: <br><span id="profEmail">--</span></div>
+            <div class="profile-info-item">Contraseña: <br><span id="profPass">******</span></div>
+            <div class="profile-info-item">Estado: <br><span style="color: #25d366;">Activo Protegido</span></div>
+            <button class="auth-btn" onclick="cerrarPerfilModal()" style="margin-top: 10px;">Cerrar Ventana</button>
+        </div>
     </div>
+
+    <!-- BARRA DE ESTADO DE SUSCRIPCIÓN, RELOJ Y BOTONES -->
+    <div class="sub-status-bar" id="statusBar" style="display: none;">
+        <div>Cuenta: <span id="userSessionEmail" style="color: #FFD700;"></span></div>
+        <div class="sub-timer">Restante: <span id="daysRemaining">30</span> días</div>
+        <div class="action-btns-group">
+            <button class="renew-btn" onclick="abrirRenovacion()">Pagar / Renovar</button>
+            <button class="profile-btn" onclick="abrirPerfilModal()">Mi Perfil</button>
+            <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <!-- BOTÓN FLOTANTE DE SOPORTE WHATSAPP -->
+    <a href="https://wa.me/584249749786?text=Hola%20YORDITV,%20necesito%20soporte%20con%20mi%20cuenta." class="whatsapp-float" target="_blank" title="Soporte WhatsApp">
+        💬
+    </a>
 
     <!-- Menú Superior con Buscador -->
     <header>
@@ -702,7 +824,20 @@
     </div>
 
     <script>
-        // Cuentas libres para ti y tu familia (10 cuentas predefinidas con acceso ilimitado gratis)
+        // Protección contra inspección de código, atajos de desarrollador y robo de contenido
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) || (event.ctrlKey && event.key === 'U')) {
+                event.preventDefault();
+                alert("Acción protegida por YORDITV.");
+                return false;
+            }
+            if (event.key === 'Escape') {
+                cerrarReproductor();
+                cerrarPerfilModal();
+            }
+        });
+
+        // Cuentas libres para ti y tu familia (10 cuentas predefinidas gratis)
         const cuentasLibres = [
             "yordiperdomo@yorditv.com",
             "familia1@yorditv.com",
@@ -766,10 +901,16 @@
 
             // Si son cuentas libres de la familia
             if(cuentasLibres.includes(email)) {
-                localStorage.setItem("yorditv_sesion", email);
-                localStorage.setItem("yorditv_dias_" + email, "999");
-                verificarAccesoConcedido(email);
-                return;
+                if(pass === "yordi1234" || pass == localStorage.getItem("pass_" + email)) {
+                    localStorage.setItem("yorditv_sesion", email);
+                    localStorage.setItem("yorditv_dias_" + email, "999");
+                    localStorage.setItem("pass_" + email, pass);
+                    verificarAccesoConcedido(email);
+                    return;
+                } else {
+                    errorBox.innerText = "Contraseña incorrecta para cuenta familiar.";
+                    return;
+                }
             }
 
             if(modoRegistro) {
@@ -777,20 +918,16 @@
                     errorBox.innerText = "Por favor selecciona un plan de suscripción.";
                     return;
                 }
-                // Guardar datos temporales de registro
                 localStorage.setItem("temp_email", email);
                 localStorage.setItem("temp_pass", pass);
                 localStorage.setItem("temp_plan", planSeleccionado);
 
-                // Generar código automático simulando IA/Sistema
                 codigoAIEnviado = Math.floor(1000 + Math.random() * 9000).toString();
                 alert("[SIMULACIÓN CORREO AI]: Tu código de verificación YORDITV es: " + codigoAIEnviado);
 
-                // Pasar a pantalla de verificación
                 document.getElementById("auth-form-card").style.display = "none";
                 document.getElementById("verify-card").style.display = "block";
             } else {
-                // Modo Login
                 let savedPass = localStorage.getItem("pass_" + email);
                 let diasRestantes = localStorage.getItem("yorditv_dias_" + email);
 
@@ -799,10 +936,9 @@
                         localStorage.setItem("yorditv_sesion", email);
                         verificarAccesoConcedido(email);
                     } else {
-                        // Si expiró, mandarlo directo a pagar
                         localStorage.setItem("temp_email", email);
                         document.getElementById("auth-form-card").style.display = "none";
-                        document.getElementById("payment-plan-info").innerText = "Tu suscripción ha expirado. Selecciona un plan o renueva.";
+                        document.getElementById("payment-plan-info").innerText = "Tu suscripción ha expirado. Renueva para continuar.";
                         document.getElementById("payment-card").style.display = "block";
                     }
                 } else {
@@ -815,7 +951,7 @@
             let codigoIngresado = document.getElementById("verify-code-input").value.trim();
             if(codigoIngresado === codigoAIEnviado) {
                 document.getElementById("verify-card").style.display = "none";
-                document.getElementById("payment-plan-info").innerText = "Plan elegido: " + planSeleccionado.toUpperCase() + " — Monto a pagar: $" + precioPlan + " (" + detallesPlan + ")";
+                document.getElementById("payment-plan-info").innerText = "Plan elegido: " + planSeleccionado.toUpperCase() + " — Monto: $" + precioPlan + " (" + detallesPlan + ")";
                 document.getElementById("payment-card").style.display = "block";
             } else {
                 alert("Código incorrecto. Revisa el código simulado enviado.");
@@ -828,7 +964,6 @@
             if(pass) {
                 localStorage.setItem("pass_" + email, pass);
             }
-            // Activar por 30 días iniciales
             localStorage.setItem("yorditv_dias_" + email, "30");
             localStorage.setItem("yorditv_sesion", email);
             
@@ -839,7 +974,6 @@
         function verificarAccesoConcedido(email) {
             let dias = localStorage.getItem("yorditv_dias_" + email);
             if(!dias || parseInt(dias) <= 0) {
-                // Mostrar pantalla de pago si no tiene días activos
                 document.getElementById("auth-overlay").style.display = "flex";
                 document.getElementById("auth-form-card").style.display = "none";
                 document.getElementById("payment-card").style.display = "block";
@@ -847,20 +981,35 @@
                 return;
             }
 
-            // Ocultar overlay y mostrar plataforma y reloj
             document.getElementById("auth-overlay").style.display = "none";
             document.getElementById("statusBar").style.display = "flex";
             document.getElementById("userSessionEmail").innerText = email;
-            document.getElementById("daysRemaining").innerText = dias === "999" ? "Ilimitados (Cuenta Familiar)" : dias;
+            document.getElementById("daysRemaining").innerText = dias === "999" ? "Ilimitados" : dias;
         }
 
         function abrirRenovacion() {
-            let email = localStorage.getItem("yorditv_sesion");
             document.getElementById("auth-overlay").style.display = "flex";
             document.getElementById("auth-form-card").style.display = "none";
             document.getElementById("verify-card").style.display = "none";
             document.getElementById("payment-card").style.display = "block";
             document.getElementById("payment-plan-info").innerText = "Renovación / Pago anticipado para mantener activa tu suscripción sin interrupciones.";
+        }
+
+        function abrirPerfilModal() {
+            let email = localStorage.getItem("yorditv_sesion");
+            let pass = localStorage.getItem("pass_" + email) || "yordi1234 (Cuenta Familiar)";
+            document.getElementById("profEmail").innerText = email;
+            document.getElementById("profPass").innerText = pass;
+            document.getElementById("profileModal").style.display = "flex";
+        }
+
+        function cerrarPerfilModal() {
+            document.getElementById("profileModal").style.display = "none";
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem("yorditv_sesion");
+            location.reload();
         }
 
         function reproducirPelicula(titulo, urlVideo) {
@@ -887,7 +1036,6 @@
             modal.style.display = 'none';
         }
 
-        // Función de Búsqueda Dinámica
         function filtrarContenido() {
             var input = document.getElementById('searchInput').value.toLowerCase();
             var cards = document.querySelectorAll('.card');
@@ -901,13 +1049,6 @@
                 }
             });
         }
-
-        // Permite cerrar presionando la tecla ESC en computadoras
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                cerrarReproductor();
-            }
-        });
     </script>
 
 </body>
