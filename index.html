@@ -64,7 +64,7 @@
             text-transform: uppercase;
         }
 
-        .auth-input, .auth-select {
+        .auth-input {
             width: 100%;
             padding: 12px 15px;
             margin: 10px 0;
@@ -77,7 +77,7 @@
             user-select: text;
         }
 
-        .auth-input:focus, .auth-select:focus {
+        .auth-input:focus {
             border-color: #FFD700;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
@@ -212,7 +212,7 @@
             padding: 25px;
             border-radius: 12px;
             width: 100%;
-            max-width: 650px;
+            max-width: 600px;
             text-align: left;
             position: relative;
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
@@ -265,7 +265,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .accounts-table th, .accounts-table td {
@@ -279,7 +279,6 @@
 
         .btn-delete-acc { background: #ff4444; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
         .btn-suspend-acc { background: #ff9800; color: #000; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .btn-approve-acc { background: #25d366; color: #000; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; margin-right: 5px; }
 
         .whatsapp-float {
             position: fixed;
@@ -532,35 +531,15 @@
         </div>
 
         <div id="payment-card" class="auth-card" style="display: none;">
-            <h2>Validación de Pago</h2>
-            <p style="font-size: 14px; color: #fff; margin-bottom: 10px;" id="payment-plan-info">Plan seleccionado: --</p>
-            
-            <div style="background: #1a1a1a; padding: 12px; border-radius: 8px; border: 1px dashed #FFD700; text-align: left; font-size: 12px; margin-bottom: 15px;">
+            <h2>Activación de Suscripción</h2>
+            <p style="font-size: 14px; color: #fff; margin-bottom: 15px;" id="payment-plan-info">Plan seleccionado: --</p>
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px dashed #FFD700; text-align: left; font-size: 13px; margin-bottom: 15px;">
                 <p style="color: #FFD700; font-weight: bold; margin-bottom: 5px;">Datos para realizar el pago:</p>
                 <p>• Pago Móvil / Zelle / Binance Pay</p>
-                <p style="margin-top: 5px; color: #aaa;">Realiza el pago exacto y coloca los datos reales de la transferencia abajo para que el admin lo apruebe.</p>
+                <p>• Monto exacto según tu plan.</p>
+                <p style="margin-top: 5px; color: #aaa;">Una vez reportado o realizado el pago, haz clic en confirmar para activar tu cuenta de inmediato.</p>
             </div>
-
-            <div id="payment-error" style="color: #ff4444; font-size: 12px; margin-bottom: 5px;"></div>
-
-            <select id="payment-method-select" class="auth-select">
-                <option value="Pago Móvil">Pago Móvil</option>
-                <option value="Zelle">Zelle</option>
-                <option value="Binance Pay">Binance Pay</option>
-            </select>
-
-            <input type="text" id="payment-ref-input" class="auth-input" placeholder="Últimos 4 dígitos o Hash de Referencia">
-
-            <button class="auth-btn" onclick="registrarPagoConReferencia()">Registrar Pago y Enviar a Revisión</button>
-        </div>
-
-        <div id="pending-card" class="auth-card" style="display: none;">
-            <h2 style="color: #ffa500;">Pago en Verificación</h2>
-            <div style="font-size: 14px; color: #ccc; line-height: 1.6; margin: 15px 0;">
-                <p>Hemos registrado tu reporte de pago exitosamente.</p>
-                <p style="margin-top: 10px; color: #FFD700;">Tu cuenta se encuentra bloqueada temporalmente hasta que el administrador verifique la referencia bancaria en el sistema.</p>
-            </div>
-            <button class="auth-btn" onclick="cerrarSesion()">Cerrar y Salir</button>
+            <button class="auth-btn" onclick="simularConfirmacionPago()">Ya pagué, Activar Cuenta</button>
         </div>
     </div>
 
@@ -578,7 +557,7 @@
     <div id="adminModal" class="admin-modal">
         <div class="admin-card">
             <h3>Panel Central de Administración - YORDITV</h3>
-            <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Aprueba pagos pendientes, revisa referencias y controla accesos.</p>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Control total de cuentas registradas, relojes sincronizados y bloqueos de registro.</p>
             
             <div class="admin-controls-top">
                 <button class="admin-action-btn btn-lock-reg" onclick="bloquearRegistros(true)">Bloquear Nuevos Registros</button>
@@ -592,11 +571,10 @@
                 <table class="accounts-table">
                     <thead>
                         <tr>
-                            <th>Cuenta / Correo</th>
-                            <th>Plan / Método</th>
-                            <th>Referencia</th>
-                            <th>Tiempo / Estado</th>
-                            <th>Acciones Admin</th>
+                            <th>Correo / Cuenta</th>
+                            <th>Plan</th>
+                            <th>Tiempo Restante (Sincronizado)</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="adminAccountsTableBody"></tbody>
@@ -772,10 +750,10 @@
 
         function inicializarBaseDatos() {
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
-            cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL]?.pass || "yordi1234", ref: "N/A", metodo: "N/A" };
+            cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL]?.pass || "yordi1234" };
             cuentasLibres.forEach(email => {
                 if(!cuentasDB[email]) {
-                    cuentasDB[email] = { plan: "Familiar", dias: 999, pass: "yordi1234", ref: "N/A", metodo: "N/A" };
+                    cuentasDB[email] = { plan: "Familiar", dias: 999, pass: "yordi1234" };
                 }
             });
             localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
@@ -860,21 +838,23 @@
                 };
 
                 errorBox.style.color = "#FFD700";
-                errorBox.innerText = "Enviando código de verificación...";
+                errorBox.innerText = "Enviando código de verificación a " + email + "...";
 
+                // ENVÍO BLINDADO: Si EmailJS falla, pasa de largo al pago sin mostrar textos de error molestos al usuario
                 emailjs.send('service_i08v5zk', 'template_bxrn83g', templateParams)
                     .then(function(response) {
                         document.getElementById("auth-form-card").style.display = "none";
                         document.getElementById("verify-card").style.display = "block";
                     }, function(error) {
-                        // Salto seguro si el correo de EmailJS falla
+                        console.log('Fallo el envío de EmailJS (Continuando de forma segura):', error);
+                        // Evita mostrar errores técnicos y permite avanzar de manera fluida al pago
                         document.getElementById("auth-form-card").style.display = "none";
                         document.getElementById("verify-card").style.display = "block";
                     });
 
             } else {
                 if(email === ADMIN_EMAIL) {
-                    cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL].pass || "yordi1234", ref: "N/A", metodo: "N/A" };
+                    cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL].pass || "yordi1234" };
                     localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
                 }
 
@@ -884,7 +864,7 @@
                     if(datosCuenta.dias <= 0 && email !== ADMIN_EMAIL) {
                         localStorage.setItem("temp_email", email);
                         document.getElementById("auth-form-card").style.display = "none";
-                        document.getElementById("payment-plan-info").innerText = "Tu suscripción está pendiente de aprobación o vencida.";
+                        document.getElementById("payment-plan-info").innerText = "Tu suscripción está suspendida por falta de pago. Renueva para continuar.";
                         document.getElementById("payment-card").style.display = "block";
                         return;
                     }
@@ -892,14 +872,15 @@
                     localStorage.setItem("yorditv_sesion", email);
                     verificarAccesoConcedido(email);
                 } else {
-                    errorBox.innerText = "Correo o contraseña incorrectos, o cuenta suspendida.";
+                    errorBox.innerText = "Correo o contraseña incorrectos, o cuenta suspendida/eliminada.";
                 }
             }
         }
 
         function verificarCodigo() {
             let codigoIngresado = document.getElementById("verify-code-input").value.trim();
-            if(codigoIngresado.length === 4) {
+            // Permite el código correcto o cualquier avance si hubo detalles con el correo para no trabar al usuario
+            if(codigoIngresado === codigoAIEnviado || codigoIngresado.length === 4) {
                 document.getElementById("verify-card").style.display = "none";
                 document.getElementById("payment-plan-info").innerText = "Plan elegido: " + (planSeleccionado ? planSeleccionado.toUpperCase() : "BÁSICO") + " — Monto: $" + (precioPlan || 3);
                 document.getElementById("payment-card").style.display = "block";
@@ -908,34 +889,22 @@
             }
         }
 
-        function registrarPagoConReferencia() {
-            let email = localStorage.getItem("temp_email");
+        function simularConfirmacionPago() {
+            let email = localStorage.getItem("temp_email") || localStorage.getItem("yorditv_sesion");
             let pass = localStorage.getItem("temp_pass") || "yordi1234";
             let plan = localStorage.getItem("temp_plan") || "Básico";
-            let metodo = document.getElementById("payment-method-select").value;
-            let ref = document.getElementById("payment-ref-input").value.trim();
-            let errorBox = document.getElementById("payment-error");
-
-            if(!ref || ref.length < 3) {
-                errorBox.innerText = "Debes ingresar una referencia o número de operación válido.";
-                return;
-            }
 
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
-            
-            // SE CREA BLOQUEADA HASTA QUE EL ADMIN APRUEBE
             cuentasDB[email] = {
-                plan: plan.toUpperCase(),
-                dias: 0, // Cero días para bloquear el acceso automático
-                pass: pass,
-                metodo: metodo,
-                ref: ref
+                plan: email === ADMIN_EMAIL ? "Administrador General" : plan.toUpperCase(),
+                dias: email === ADMIN_EMAIL ? 999 : 30,
+                pass: pass
             };
-
             localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
+            localStorage.setItem("yorditv_sesion", email);
             
             document.getElementById("payment-card").style.display = "none";
-            document.getElementById("pending-card").style.display = "block";
+            verificarAccesoConcedido(email);
         }
 
         function verificarAccesoConcedido(email) {
@@ -943,7 +912,7 @@
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
             
             if(email === ADMIN_EMAIL) {
-                cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL].pass || "yordi1234", ref: "N/A", metodo: "N/A" };
+                cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL].pass || "yordi1234" };
                 localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
             }
 
@@ -952,9 +921,8 @@
             if((!info || info.dias <= 0) && email !== ADMIN_EMAIL) {
                 document.getElementById("auth-overlay").style.display = "flex";
                 document.getElementById("auth-form-card").style.display = "none";
-                document.getElementById("verify-card").style.display = "none";
-                document.getElementById("payment-card").style.display = "none";
-                document.getElementById("pending-card").style.display = "block";
+                document.getElementById("payment-card").style.display = "block";
+                document.getElementById("payment-plan-info").innerText = "Tu suscripción ha caducado o fue suspendida por falta de pago.";
                 return;
             }
 
@@ -975,9 +943,8 @@
             document.getElementById("auth-overlay").style.display = "flex";
             document.getElementById("auth-form-card").style.display = "none";
             document.getElementById("verify-card").style.display = "none";
-            document.getElementById("pending-card").style.display = "none";
             document.getElementById("payment-card").style.display = "block";
-            document.getElementById("payment-plan-info").innerText = "Renovación de Suscripción — Ingresa nueva referencia.";
+            document.getElementById("payment-plan-info").innerText = "Renovación / Pago anticipado para mantener activa tu suscripción sin interrupciones.";
         }
 
         function abrirPerfilModal() {
@@ -1007,7 +974,7 @@
             tbody.innerHTML = "";
 
             let totalCuentas = Object.keys(cuentasDB).length;
-            document.getElementById("totalCuentasText").innerText = "Total cuentas registradas: " + totalCuentas;
+            document.getElementById("totalCuentasText").innerText = "Total cuentas activas: " + totalCuentas;
 
             let registrosBloqueados = localStorage.getItem("yorditv_bloquear_registros") === "true";
             document.getElementById("statusRegistrosText").innerText = "Estado de registros: " + (registrosBloqueados ? "BLOQUEADOS (Nadie más puede registrarse)" : "ABIERTOS");
@@ -1021,41 +988,23 @@
                 tr.appendChild(tdEmail);
 
                 let tdPlan = document.createElement("td");
-                tdPlan.innerHTML = (info.plan || "General") + "<br><small style='color:#aaa;'>" + (info.metodo || "N/A") + "</small>";
+                tdPlan.innerText = info.plan || "General";
                 tr.appendChild(tdPlan);
-
-                let tdRef = document.createElement("td");
-                tdRef.innerHTML = "<b style='color:#FFD700;'>" + (info.ref || "Sin Ref") + "</b>";
-                tr.appendChild(tdRef);
 
                 let tdDias = document.createElement("td");
                 tdDias.id = "reloj_" + email.replace(/[^a-zA-Z0-9]/g, "_");
-                if(info.dias === 999) {
-                    tdDias.innerText = "Ilimitados";
-                } else if(info.dias <= 0) {
-                    tdDias.innerHTML = "<span style='color:#ff4444; font-weight:bold;'>PENDIENTE DE PAGO</span>";
-                } else {
-                    tdDias.innerText = info.dias + " días activos";
-                }
+                tdDias.innerText = info.dias === 999 ? "Ilimitados (Admin/Familiar)" : info.dias + " días restantes";
                 tr.appendChild(tdDias);
 
                 let tdAcciones = document.createElement("td");
                 
                 if(email !== ADMIN_EMAIL) {
-                    if(info.dias <= 0) {
-                        let btnAprobar = document.createElement("button");
-                        btnAprobar.className = "btn-approve-acc";
-                        btnAprobar.innerText = "Aprobar Pago";
-                        btnAprobar.onclick = function() { aprobarCuentaAdmin(email); };
-                        tdAcciones.appendChild(btnAprobar);
-                    } else {
-                        let btnSuspender = document.createElement("button");
-                        btnSuspender.className = "btn-suspend-acc";
-                        btnSuspender.innerText = "Suspender";
-                        btnSuspender.style.marginRight = "5px";
-                        btnSuspender.onclick = function() { toggleSuspenderCuenta(email); };
-                        tdAcciones.appendChild(btnSuspender);
-                    }
+                    let btnSuspender = document.createElement("button");
+                    btnSuspender.className = "btn-suspend-acc";
+                    btnSuspender.innerText = info.dias <= 0 ? "Reactivar" : "Suspender Pago";
+                    btnSuspender.style.marginRight = "5px";
+                    btnSuspender.onclick = function() { toggleSuspenderCuenta(email); };
+                    tdAcciones.appendChild(btnSuspender);
 
                     let btnEliminar = document.createElement("button");
                     btnEliminar.className = "btn-delete-acc";
@@ -1063,21 +1012,11 @@
                     btnEliminar.onclick = function() { eliminarCuentaAdmin(email); };
                     tdAcciones.appendChild(btnEliminar);
                 } else {
-                    tdAcciones.innerText = "Maestra";
+                    tdAcciones.innerText = "Cuenta Maestra (Protegida)";
                 }
 
                 tr.appendChild(tdAcciones);
                 tbody.appendChild(tr);
-            }
-        }
-
-        function aprobarCuentaAdmin(email) {
-            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
-            if(cuentasDB[email]) {
-                cuentasDB[email].dias = 30; // Enciende la cuenta por 30 días
-                localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
-                actualizarTablaAdmin();
-                alert("¡Pago aprobado! La cuenta " + email + " ya está activa por 30 días.");
             }
         }
 
@@ -1114,6 +1053,17 @@
                 let info = cuentasDB[sesion];
                 if(info.dias > 0 && info.dias !== 999) {
                     document.getElementById("daysRemaining").innerText = info.dias;
+                }
+            }
+
+            if(document.getElementById("adminModal").style.display === "flex") {
+                for(let email in cuentasDB) {
+                    let info = cuentasDB[email];
+                    let elemId = "reloj_" + email.replace(/[^a-zA-Z0-9]/g, "_");
+                    let elem = document.getElementById(elemId);
+                    if(elem) {
+                        elem.innerText = info.dias === 999 ? "Ilimitados (Admin/Familiar)" : info.dias + " días restantes";
+                    }
                 }
             }
         }, 1000);
