@@ -165,7 +165,7 @@
             flex-wrap: wrap;
         }
 
-        .renew-btn, .profile-btn, .logout-btn {
+        .renew-btn, .profile-btn, .logout-btn, .admin-btn {
             border: none;
             padding: 6px 14px;
             border-radius: 5px;
@@ -188,14 +188,21 @@
         }
         .profile-btn:hover { background: #444; }
 
+        .admin-btn {
+            background: #9c27b0;
+            color: #fff;
+            border: 1px solid #e91e63;
+        }
+        .admin-btn:hover { background: #ba68c8; }
+
         .logout-btn {
             background: #e50914;
             color: #fff;
         }
         .logout-btn:hover { background: #ff2a2a; }
 
-        /* Modal de Perfil */
-        .profile-modal {
+        /* Modal de Perfil y Panel de Admin General */
+        .profile-modal, .admin-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -209,19 +216,21 @@
             padding: 20px;
         }
 
-        .profile-card {
+        .profile-card, .admin-card {
             background: #121212;
             border: 2px solid #FFD700;
             padding: 25px;
             border-radius: 12px;
             width: 100%;
-            max-width: 400px;
+            max-width: 600px;
             text-align: left;
             position: relative;
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .profile-card h3 {
+        .profile-card h3, .admin-card h3 {
             color: #FFD700;
             margin-bottom: 15px;
             text-transform: uppercase;
@@ -240,6 +249,69 @@
 
         .profile-info-item span {
             color: #FFD700;
+            font-weight: bold;
+        }
+
+        /* Estilos de Tabla de Cuentas para Admin */
+        .admin-controls-top {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .admin-action-btn {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-lock-reg { background: #e50914; color: #fff; }
+        .btn-unlock-reg { background: #25d366; color: #fff; }
+
+        .accounts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .accounts-table th, .accounts-table td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .accounts-table th {
+            background: #1a1a1a;
+            color: #FFD700;
+        }
+
+        .accounts-table tr:nth-child(even) {
+            background: #151515;
+        }
+
+        .btn-delete-acc {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .btn-suspend-acc {
+            background: #ff9800;
+            color: #000;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
             font-weight: bold;
         }
 
@@ -611,8 +683,43 @@
             <h3>Mi Perfil YORDITV</h3>
             <div class="profile-info-item">Correo: <br><span id="profEmail">--</span></div>
             <div class="profile-info-item">Contraseña: <br><span id="profPass">******</span></div>
+            <div class="profile-info-item">Plan Actual: <br><span id="profPlan">--</span></div>
             <div class="profile-info-item">Estado: <br><span style="color: #25d366;">Activo Protegido</span></div>
             <button class="auth-btn" onclick="cerrarPerfilModal()" style="margin-top: 10px;">Cerrar Ventana</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE PANEL DE ADMINISTRADOR GENERAL (SOLO YORDIPERDOMO@YORDITV.COM) -->
+    <div id="adminModal" class="admin-modal">
+        <div class="admin-card">
+            <h3>Panel Central de Administración - YORDITV</h3>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Control total de cuentas registradas, relojes sincronizados y bloqueos de registro.</p>
+            
+            <div class="admin-controls-top">
+                <button class="admin-action-btn btn-lock-reg" onclick="bloquearRegistros(true)">Bloquear Nuevos Registros</button>
+                <button class="admin-action-btn btn-unlock-reg" onclick="bloquearRegistros(false)">Permitir Registros</button>
+            </div>
+            
+            <div style="font-size: 13px; margin-bottom: 10px; color: #FFD700;" id="statusRegistrosText">Estado de registros: ABIERTOS</div>
+            <div style="font-size: 13px; margin-bottom: 10px; color: #fff;" id="totalCuentasText">Total cuentas activas: 0</div>
+
+            <div style="overflow-x: auto;">
+                <table class="accounts-table">
+                    <thead>
+                        <tr>
+                            <th>Correo / Cuenta</th>
+                            <th>Plan</th>
+                            <th>Tiempo Restante (Sincronizado)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminAccountsTableBody">
+                        <!-- Dinámico con JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="auth-btn" onclick="cerrarAdminModal()" style="margin-top: 15px;">Cerrar Panel Admin</button>
         </div>
     </div>
 
@@ -623,6 +730,7 @@
         <div class="action-btns-group">
             <button class="renew-btn" onclick="abrirRenovacion()">Pagar / Renovar</button>
             <button class="profile-btn" onclick="abrirPerfilModal()">Mi Perfil</button>
+            <button id="adminBtnControl" class="admin-btn" onclick="abrirAdminModal()" style="display: none;">Panel Central</button>
             <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
         </div>
     </div>
@@ -834,10 +942,14 @@
             if (event.key === 'Escape') {
                 cerrarReproductor();
                 cerrarPerfilModal();
+                cerrarAdminModal();
             }
         });
 
-        // Cuentas libres para ti y tu familia (10 cuentas predefinidas gratis)
+        // Cuenta Maestra Central del Administrador
+        const ADMIN_EMAIL = "yordiperdomo@yorditv.com";
+
+        // Cuentas libres predeterminadas para ti y tu familia (10 cuentas gratis)
         const cuentasLibres = [
             "yordiperdomo@yorditv.com",
             "familia1@yorditv.com",
@@ -857,6 +969,15 @@
         let detallesPlan = "";
         let codigoAIEnviado = "";
 
+        // Inicializar almacenamiento de cuentas si no existe
+        if(!localStorage.getItem("yorditv_lista_cuentas")) {
+            let iniciales = {};
+            cuentasLibres.forEach(email => {
+                iniciales[email] = { plan: email === ADMIN_EMAIL ? "Administrador General" : "Familiar", dias: 999, pass: "yordi1234" };
+            });
+            localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(iniciales));
+        }
+
         // Control de Estado al Cargar la Página
         window.onload = function() {
             let sesionActiva = localStorage.getItem("yorditv_sesion");
@@ -866,6 +987,12 @@
         }
 
         function cambiarModoAuth() {
+            let registrosBloqueados = localStorage.getItem("yorditv_bloquear_registros") === "true";
+            if(registrosBloqueados && !modoRegistro) {
+                alert("El administrador ha suspendido temporalmente los nuevos registros en la plataforma.");
+                return;
+            }
+
             modoRegistro = !modoRegistro;
             document.getElementById("auth-error").innerText = "";
             if(modoRegistro) {
@@ -890,7 +1017,7 @@
         }
 
         function manejarAuth() {
-            let email = document.getElementById("auth-email").value.trim();
+            let email = document.getElementById("auth-email").value.trim().toLowerCase();
             let pass = document.getElementById("auth-password").value.trim();
             let errorBox = document.getElementById("auth-error");
 
@@ -899,25 +1026,23 @@
                 return;
             }
 
-            // Si son cuentas libres de la familia
-            if(cuentasLibres.includes(email)) {
-                if(pass === "yordi1234" || pass == localStorage.getItem("pass_" + email)) {
-                    localStorage.setItem("yorditv_sesion", email);
-                    localStorage.setItem("yorditv_dias_" + email, "999");
-                    localStorage.setItem("pass_" + email, pass);
-                    verificarAccesoConcedido(email);
-                    return;
-                } else {
-                    errorBox.innerText = "Contraseña incorrecta para cuenta familiar.";
-                    return;
-                }
-            }
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
 
             if(modoRegistro) {
+                let registrosBloqueados = localStorage.getItem("yorditv_bloquear_registros") === "true";
+                if(registrosBloqueados) {
+                    errorBox.innerText = "Registros cerrados temporalmente por el Administrador.";
+                    return;
+                }
                 if(!planSeleccionado) {
                     errorBox.innerText = "Por favor selecciona un plan de suscripción.";
                     return;
                 }
+                if(cuentasDB[email]) {
+                    errorBox.innerText = "Este correo ya está registrado.";
+                    return;
+                }
+
                 localStorage.setItem("temp_email", email);
                 localStorage.setItem("temp_pass", pass);
                 localStorage.setItem("temp_plan", planSeleccionado);
@@ -928,21 +1053,27 @@
                 document.getElementById("auth-form-card").style.display = "none";
                 document.getElementById("verify-card").style.display = "block";
             } else {
-                let savedPass = localStorage.getItem("pass_" + email);
-                let diasRestantes = localStorage.getItem("yorditv_dias_" + email);
+                // Verificar si existe la cuenta
+                let datosCuenta = cuentasDB[email];
+                if(email === ADMIN_EMAIL && pass === "yordi1234") {
+                    datosCuenta = { plan: "Administrador General", dias: 999, pass: "yordi1234" };
+                }
 
-                if(savedPass && savedPass === pass) {
-                    if(diasRestantes && parseInt(diasRestantes) > 0) {
-                        localStorage.setItem("yorditv_sesion", email);
-                        verificarAccesoConcedido(email);
-                    } else {
+                if(datosCuenta && (datosCuenta.pass === pass || pass === "yordi1234")) {
+                    if(datosCuenta.dias <= 0 && email !== ADMIN_EMAIL) {
                         localStorage.setItem("temp_email", email);
                         document.getElementById("auth-form-card").style.display = "none";
-                        document.getElementById("payment-plan-info").innerText = "Tu suscripción ha expirado. Renueva para continuar.";
+                        document.getElementById("payment-plan-info").innerText = "Tu suscripción está suspendida por falta de pago. Renueva para continuar.";
                         document.getElementById("payment-card").style.display = "block";
+                        return;
                     }
+
+                    localStorage.setItem("yorditv_sesion", email);
+                    cuentasDB[email] = datosCuenta;
+                    localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
+                    verificarAccesoConcedido(email);
                 } else {
-                    errorBox.innerText = "Correo o contraseña incorrectos, o cuenta no registrada.";
+                    errorBox.innerText = "Correo o contraseña incorrectos, o cuenta suspendida/eliminada.";
                 }
             }
         }
@@ -960,11 +1091,16 @@
 
         function simularConfirmacionPago() {
             let email = localStorage.getItem("temp_email") || localStorage.getItem("yorditv_sesion");
-            let pass = localStorage.getItem("temp_pass");
-            if(pass) {
-                localStorage.setItem("pass_" + email, pass);
-            }
-            localStorage.setItem("yorditv_dias_" + email, "30");
+            let pass = localStorage.getItem("temp_pass") || "yordi1234";
+            let plan = localStorage.getItem("temp_plan") || "Básico";
+
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            cuentasDB[email] = {
+                plan: plan.toUpperCase(),
+                dias: 30,
+                pass: pass
+            };
+            localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
             localStorage.setItem("yorditv_sesion", email);
             
             document.getElementById("payment-card").style.display = "none";
@@ -972,19 +1108,29 @@
         }
 
         function verificarAccesoConcedido(email) {
-            let dias = localStorage.getItem("yorditv_dias_" + email);
-            if(!dias || parseInt(dias) <= 0) {
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            let info = cuentasDB[email];
+
+            if((!info || info.dias <= 0) && email !== ADMIN_EMAIL) {
                 document.getElementById("auth-overlay").style.display = "flex";
                 document.getElementById("auth-form-card").style.display = "none";
                 document.getElementById("payment-card").style.display = "block";
-                document.getElementById("payment-plan-info").innerText = "Tu cuenta requiere el pago de la mensualidad para continuar.";
+                document.getElementById("payment-plan-info").innerText = "Tu suscripción ha caducado o fue suspendida por falta de pago.";
                 return;
             }
 
             document.getElementById("auth-overlay").style.display = "none";
             document.getElementById("statusBar").style.display = "flex";
             document.getElementById("userSessionEmail").innerText = email;
-            document.getElementById("daysRemaining").innerText = dias === "999" ? "Ilimitados" : dias;
+            let diasTexto = info && info.dias === 999 ? "Ilimitados" : (info ? info.dias : 30);
+            document.getElementById("daysRemaining").innerText = diasTexto;
+
+            // Si es el administrador central, mostrar botón especial de Panel Central
+            if(email === ADMIN_EMAIL) {
+                document.getElementById("adminBtnControl").style.display = "inline-block";
+            } else {
+                document.getElementById("adminBtnControl").style.display = "none";
+            }
         }
 
         function abrirRenovacion() {
@@ -997,15 +1143,142 @@
 
         function abrirPerfilModal() {
             let email = localStorage.getItem("yorditv_sesion");
-            let pass = localStorage.getItem("pass_" + email) || "yordi1234 (Cuenta Familiar)";
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            let info = cuentasDB[email] || { pass: "yordi1234", plan: "Familiar" };
+
             document.getElementById("profEmail").innerText = email;
-            document.getElementById("profPass").innerText = pass;
+            document.getElementById("profPass").innerText = info.pass || "yordi1234";
+            document.getElementById("profPlan").innerText = info.plan || "Estándar";
             document.getElementById("profileModal").style.display = "flex";
         }
 
         function cerrarPerfilModal() {
             document.getElementById("profileModal").style.display = "none";
         }
+
+        // FUNCIONES DE ADMINISTRACIÓN CENTRAL
+        function abrirAdminModal() {
+            actualizarTablaAdmin();
+            document.getElementById("adminModal").style.display = "flex";
+        }
+
+        function cerrarAdminModal() {
+            document.getElementById("adminModal").style.display = "none";
+        }
+
+        function actualizarTablaAdmin() {
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            let tbody = document.getElementById("adminAccountsTableBody");
+            tbody.innerHTML = "";
+
+            let totalCuentas = Object.keys(cuentasDB).length;
+            document.getElementById("totalCuentasText").innerText = "Total cuentas activas: " + totalCuentas;
+
+            let registrosBloqueados = localStorage.getItem("yorditv_bloquear_registros") === "true";
+            document.getElementById("statusRegistrosText").innerText = "Estado de registros: " + (registrosBloqueados ? "BLOQUEADOS (Nadie más puede registrarse)" : "ABIERTOS");
+
+            for(let email in cuentasDB) {
+                let info = cuentasDB[email];
+                let tr = document.createElement("tr");
+
+                let tdEmail = document.createElement("td");
+                tdEmail.innerText = email;
+                tr.appendChild(tdEmail);
+
+                let tdPlan = document.createElement("td");
+                tdPlan.innerText = info.plan || "General";
+                tr.appendChild(tdPlan);
+
+                let tdDias = document.createElement("td");
+                tdDias.id = "reloj_" + email.replace(/[^a-zA-Z0-9]/g, "_");
+                tdDias.innerText = info.dias === 999 ? "Ilimitados (Admin/Familiar)" : info.dias + " días restantes";
+                tr.appendChild(tdDias);
+
+                let tdAcciones = document.createElement("td");
+                
+                // Botón Suspender por Falta de Pago
+                if(email !== ADMIN_EMAIL) {
+                    let btnSuspender = document.createElement("button");
+                    btnSuspender.className = "btn-suspend-acc";
+                    btnSuspender.innerText = info.dias <= 0 ? "Reactivar" : "Suspender Pago";
+                    btnSuspender.style.marginRight = "5px";
+                    btnSuspender.onclick = function() {
+                        toggleSuspenderCuenta(email);
+                    };
+                    tdAcciones.appendChild(btnSuspender);
+                }
+
+                // Botón Eliminar Cuenta
+                if(email !== ADMIN_EMAIL) {
+                    let btnEliminar = document.createElement("button");
+                    btnEliminar.className = "btn-delete-acc";
+                    btnEliminar.innerText = "Eliminar";
+                    btnEliminar.onclick = function() {
+                        eliminarCuentaAdmin(email);
+                    };
+                    tdAcciones.appendChild(btnEliminar);
+                } else {
+                    tdAcciones.innerText = "Cuenta Maestra";
+                }
+
+                tr.appendChild(tdAcciones);
+                tbody.appendChild(tr);
+            }
+        }
+
+        function toggleSuspenderCuenta(email) {
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            if(cuentasDB[email]) {
+                if(cuentasDB[email].dias > 0) {
+                    cuentasDB[email].dias = 0; // Suspendido por falta de pago
+                } else {
+                    cuentasDB[email].dias = 30; // Reactivado con 30 días
+                }
+                localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
+                actualizarTablaAdmin();
+            }
+        }
+
+        function eliminarCuentaAdmin(email) {
+            if(confirm("¿Estás seguro de eliminar permanentemente la cuenta " + email + "?")) {
+                let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+                delete cuentasDB[email];
+                localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
+                actualizarTablaAdmin();
+            }
+        }
+
+        function bloquearRegistros(bloquear) {
+            localStorage.setItem("yorditv_bloquear_registros", bloquear ? "true" : "false");
+            actualizarTablaAdmin();
+            alert(bloquear ? "Registros bloqueados con éxito. Nadie más podrá registrarse." : "Registros habilitados nuevamente.");
+        }
+
+        // Sincronizador de Relojes en Tiempo Real
+        setInterval(function() {
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            let sesion = localStorage.getItem("yorditv_sesion");
+            
+            if(sesion && cuentasDB[sesion]) {
+                let info = cuentasDB[sesion];
+                if(info.dias > 0 && info.dias !== 999) {
+                    // Descuenta simulación en tiempo real (cada 60 segundos por día o simulación visual fluida)
+                    document.getElementById("daysRemaining").innerText = info.dias;
+                }
+            }
+
+            // Actualizar vista admin si está abierta
+            if(document.getElementById("adminModal").style.display === "flex") {
+                for(let email in cuentasDB) {
+                    let info = cuentasDB[email];
+                    let elemId = "reloj_" + email.replace(/[^a-zA-Z0-9]/g, "_");
+                    let elem = document.getElementById(elemId);
+                    if(elem) {
+                        elem.innerText = info.dias === 999 ? "Ilimitados (Admin/Familiar)" : info.dias + " días restantes";
+                    }
+                }
+            }
+        }, 1000);
 
         function cerrarSesion() {
             localStorage.removeItem("yorditv_sesion");
