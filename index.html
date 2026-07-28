@@ -932,7 +932,7 @@
     </div>
 
     <script>
-        // Protección contra inspección de código, atajos de desarrollador y robo de contenido
+        // Protección contra inspección de código y atajos
         document.addEventListener('keydown', function(event) {
             if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) || (event.ctrlKey && event.key === 'U')) {
                 event.preventDefault();
@@ -946,10 +946,8 @@
             }
         });
 
-        // Cuenta Maestra Central del Administrador
         const ADMIN_EMAIL = "yordiperdomo@yorditv.com";
 
-        // Cuentas libres predeterminadas para ti y tu familia (10 cuentas gratis)
         const cuentasLibres = [
             "yordiperdomo@yorditv.com",
             "familia1@yorditv.com",
@@ -969,16 +967,29 @@
         let detallesPlan = "";
         let codigoAIEnviado = "";
 
-        // Inicializar almacenamiento de cuentas si no existe
-        if(!localStorage.getItem("yorditv_lista_cuentas")) {
-            let iniciales = {};
+        // Inicializar o limpiar forzosamente para asegurar la cuenta maestra intacta
+        function inicializarBaseDatos() {
+            let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            
+            // Asegurar que la cuenta maestra exista siempre y tenga privilegios de Administrador y 999 días
+            cuentasDB[ADMIN_EMAIL] = { 
+                plan: "Administrador General", 
+                dias: 999, 
+                pass: cuentasDB[ADMIN_EMAIL] && cuentasDB[ADMIN_EMAIL].pass ? cuentasDB[ADMIN_EMAIL].pass : "yordi1234" 
+            };
+
+            // Asegurar demás cuentas libres si no existen
             cuentasLibres.forEach(email => {
-                iniciales[email] = { plan: email === ADMIN_EMAIL ? "Administrador General" : "Familiar", dias: 999, pass: "yordi1234" };
+                if(!cuentasDB[email]) {
+                    cuentasDB[email] = { plan: "Familiar", dias: 999, pass: "yordi1234" };
+                }
             });
-            localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(iniciales));
+
+            localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
         }
 
-        // Control de Estado al Cargar la Página
+        inicializarBaseDatos();
+
         window.onload = function() {
             let sesionActiva = localStorage.getItem("yorditv_sesion");
             if(sesionActiva) {
@@ -1026,15 +1037,16 @@
                 return;
             }
 
+            inicializarBaseDatos();
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
 
             if(modoRegistro) {
                 let registrosBloqueados = localStorage.getItem("yorditv_bloquear_registros") === "true";
-                if(registrosBloqueados) {
+                if(registrosBloqueados && email !== ADMIN_EMAIL) {
                     errorBox.innerText = "Registros cerrados temporalmente por el Administrador.";
                     return;
                 }
-                if(!planSeleccionado) {
+                if(!planSeleccionado && email !== ADMIN_EMAIL) {
                     errorBox.innerText = "Por favor selecciona un plan de suscripción.";
                     return;
                 }
@@ -1045,7 +1057,7 @@
 
                 localStorage.setItem("temp_email", email);
                 localStorage.setItem("temp_pass", pass);
-                localStorage.setItem("temp_plan", planSeleccionado);
+                localStorage.setItem("temp_plan", planSeleccionado || "Básico");
 
                 codigoAIEnviado = Math.floor(1000 + Math.random() * 9000).toString();
                 alert("[SIMULACIÓN CORREO AI]: Tu código de verificación YORDITV es: " + codigoAIEnviado);
@@ -1053,13 +1065,15 @@
                 document.getElementById("auth-form-card").style.display = "none";
                 document.getElementById("verify-card").style.display = "block";
             } else {
-                // Verificar si existe la cuenta
-                let datosCuenta = cuentasDB[email];
-                if(email === ADMIN_EMAIL && pass === "yordi1234") {
-                    datosCuenta = { plan: "Administrador General", dias: 999, pass: "yordi1234" };
+                // EXCEPCIÓN MAESTRA INQUEBRANTABLE PARA YORDIPERDOMO
+                if(email === ADMIN_EMAIL) {
+                    cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL].pass || "yordi1234" };
+                    localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
                 }
 
-                if(datosCuenta && (datosCuenta.pass === pass || pass === "yordi1234")) {
+                let datosCuenta = cuentasDB[email];
+
+                if(datosCuenta && (datosCuenta.pass === pass || pass === "yordi1234" || email === ADMIN_EMAIL)) {
                     if(datosCuenta.dias <= 0 && email !== ADMIN_EMAIL) {
                         localStorage.setItem("temp_email", email);
                         document.getElementById("auth-form-card").style.display = "none";
@@ -1069,8 +1083,6 @@
                     }
 
                     localStorage.setItem("yorditv_sesion", email);
-                    cuentasDB[email] = datosCuenta;
-                    localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
                     verificarAccesoConcedido(email);
                 } else {
                     errorBox.innerText = "Correo o contraseña incorrectos, o cuenta suspendida/eliminada.";
@@ -1082,7 +1094,7 @@
             let codigoIngresado = document.getElementById("verify-code-input").value.trim();
             if(codigoIngresado === codigoAIEnviado) {
                 document.getElementById("verify-card").style.display = "none";
-                document.getElementById("payment-plan-info").innerText = "Plan elegido: " + planSeleccionado.toUpperCase() + " — Monto: $" + precioPlan + " (" + detallesPlan + ")";
+                document.getElementById("payment-plan-info").innerText = "Plan elegido: " + (planSeleccionado ? planSeleccionado.toUpperCase() : "BÁSICO") + " — Monto: $" + (precioPlan || 3);
                 document.getElementById("payment-card").style.display = "block";
             } else {
                 alert("Código incorrecto. Revisa el código simulado enviado.");
@@ -1096,8 +1108,8 @@
 
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
             cuentasDB[email] = {
-                plan: plan.toUpperCase(),
-                dias: 30,
+                plan: email === ADMIN_EMAIL ? "Administrador General" : plan.toUpperCase(),
+                dias: email === ADMIN_EMAIL ? 999 : 30,
                 pass: pass
             };
             localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
@@ -1108,7 +1120,14 @@
         }
 
         function verificarAccesoConcedido(email) {
+            inicializarBaseDatos();
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
+            
+            if(email === ADMIN_EMAIL) {
+                cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL].pass || "yordi1234" };
+                localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
+            }
+
             let info = cuentasDB[email];
 
             if((!info || info.dias <= 0) && email !== ADMIN_EMAIL) {
@@ -1125,7 +1144,6 @@
             let diasTexto = info && info.dias === 999 ? "Ilimitados" : (info ? info.dias : 30);
             document.getElementById("daysRemaining").innerText = diasTexto;
 
-            // Si es el administrador central, mostrar botón especial de Panel Central
             if(email === ADMIN_EMAIL) {
                 document.getElementById("adminBtnControl").style.display = "inline-block";
             } else {
@@ -1167,6 +1185,7 @@
         }
 
         function actualizarTablaAdmin() {
+            inicializarBaseDatos();
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
             let tbody = document.getElementById("adminAccountsTableBody");
             tbody.innerHTML = "";
@@ -1196,7 +1215,6 @@
 
                 let tdAcciones = document.createElement("td");
                 
-                // Botón Suspender por Falta de Pago
                 if(email !== ADMIN_EMAIL) {
                     let btnSuspender = document.createElement("button");
                     btnSuspender.className = "btn-suspend-acc";
@@ -1206,10 +1224,7 @@
                         toggleSuspenderCuenta(email);
                     };
                     tdAcciones.appendChild(btnSuspender);
-                }
 
-                // Botón Eliminar Cuenta
-                if(email !== ADMIN_EMAIL) {
                     let btnEliminar = document.createElement("button");
                     btnEliminar.className = "btn-delete-acc";
                     btnEliminar.innerText = "Eliminar";
@@ -1218,7 +1233,7 @@
                     };
                     tdAcciones.appendChild(btnEliminar);
                 } else {
-                    tdAcciones.innerText = "Cuenta Maestra";
+                    tdAcciones.innerText = "Cuenta Maestra (Protegida)";
                 }
 
                 tr.appendChild(tdAcciones);
@@ -1228,11 +1243,11 @@
 
         function toggleSuspenderCuenta(email) {
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
-            if(cuentasDB[email]) {
+            if(cuentasDB[email] && email !== ADMIN_EMAIL) {
                 if(cuentasDB[email].dias > 0) {
-                    cuentasDB[email].dias = 0; // Suspendido por falta de pago
+                    cuentasDB[email].dias = 0;
                 } else {
-                    cuentasDB[email].dias = 30; // Reactivado con 30 días
+                    cuentasDB[email].dias = 30;
                 }
                 localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
                 actualizarTablaAdmin();
@@ -1240,6 +1255,10 @@
         }
 
         function eliminarCuentaAdmin(email) {
+            if(email === ADMIN_EMAIL) {
+                alert("No puedes eliminar la cuenta maestra.");
+                return;
+            }
             if(confirm("¿Estás seguro de eliminar permanentemente la cuenta " + email + "?")) {
                 let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
                 delete cuentasDB[email];
@@ -1262,12 +1281,10 @@
             if(sesion && cuentasDB[sesion]) {
                 let info = cuentasDB[sesion];
                 if(info.dias > 0 && info.dias !== 999) {
-                    // Descuenta simulación en tiempo real (cada 60 segundos por día o simulación visual fluida)
                     document.getElementById("daysRemaining").innerText = info.dias;
                 }
             }
 
-            // Actualizar vista admin si está abierta
             if(document.getElementById("adminModal").style.display === "flex") {
                 for(let email in cuentasDB) {
                     let info = cuentasDB[email];
