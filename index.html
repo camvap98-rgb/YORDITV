@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YORDITV - Tu Plataforma Privada</title>
    
+    <!-- SDK DE EMAILJS CON TUS CREDENCIALES CONFIGURADAS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("JvXR-QlA-Pg3w4iU9");
+       })();
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -971,14 +979,12 @@
         function inicializarBaseDatos() {
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
             
-            // Asegurar que la cuenta maestra exista siempre y tenga privilegios de Administrador y 999 días
             cuentasDB[ADMIN_EMAIL] = { 
                 plan: "Administrador General", 
                 dias: 999, 
                 pass: cuentasDB[ADMIN_EMAIL] && cuentasDB[ADMIN_EMAIL].pass ? cuentasDB[ADMIN_EMAIL].pass : "yordi1234" 
             };
 
-            // Asegurar demás cuentas libres si no existen
             cuentasLibres.forEach(email => {
                 if(!cuentasDB[email]) {
                     cuentasDB[email] = { plan: "Familiar", dias: 999, pass: "yordi1234" };
@@ -1059,13 +1065,29 @@
                 localStorage.setItem("temp_pass", pass);
                 localStorage.setItem("temp_plan", planSeleccionado || "Básico");
 
+                // Generar código de 4 dígitos y enviar por EmailJS con tus credenciales
                 codigoAIEnviado = Math.floor(1000 + Math.random() * 9000).toString();
-                alert("[SIMULACIÓN CORREO AI]: Tu código de verificación YORDITV es: " + codigoAIEnviado);
 
-                document.getElementById("auth-form-card").style.display = "none";
-                document.getElementById("verify-card").style.display = "block";
+                let templateParams = {
+                    to_email: email,
+                    verification_code: codigoAIEnviado
+                };
+
+                errorBox.style.color = "#FFD700";
+                errorBox.innerText = "Enviando código de verificación a " + email + "...";
+
+                emailjs.send('service_i08v5zk', 'template_bxrn83g', templateParams)
+                    .then(function(response) {
+                        alert("¡Código enviado con éxito! Revisa tu bandeja de entrada o spam en " + email);
+                        document.getElementById("auth-form-card").style.display = "none";
+                        document.getElementById("verify-card").style.display = "block";
+                    }, function(error) {
+                        errorBox.style.color = "#ff4444";
+                        errorBox.innerText = "Error al enviar correo. Revisa tu Service ID o Template ID.";
+                        console.log('FAILED...', error);
+                    });
+
             } else {
-                // EXCEPCIÓN MAESTRA INQUEBRANTABLE PARA YORDIPERDOMO
                 if(email === ADMIN_EMAIL) {
                     cuentasDB[ADMIN_EMAIL] = { plan: "Administrador General", dias: 999, pass: cuentasDB[ADMIN_EMAIL].pass || "yordi1234" };
                     localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
@@ -1097,7 +1119,7 @@
                 document.getElementById("payment-plan-info").innerText = "Plan elegido: " + (planSeleccionado ? planSeleccionado.toUpperCase() : "BÁSICO") + " — Monto: $" + (precioPlan || 3);
                 document.getElementById("payment-card").style.display = "block";
             } else {
-                alert("Código incorrecto. Revisa el código simulado enviado.");
+                alert("Código incorrecto. Revisa el código que llegó a tu correo.");
             }
         }
 
