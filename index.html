@@ -538,7 +538,7 @@
             <div style="background: #1a1a1a; padding: 12px; border-radius: 8px; border: 1px dashed #FFD700; text-align: left; font-size: 12px; margin-bottom: 15px;">
                 <p style="color: #FFD700; font-weight: bold; margin-bottom: 5px;">Datos para realizar el pago:</p>
                 <p>• Pago Móvil / Zelle / Binance Pay</p>
-                <p style="margin-top: 5px; color: #aaa;">Realiza el pago exacto y coloca los datos reales de la transferencia abajo para notificar al administrador.</p>
+                <p style="margin-top: 5px; color: #aaa;">Realiza el pago exacto y coloca los datos reales de la transferencia abajo para que el admin lo apruebe.</p>
             </div>
 
             <div id="payment-error" style="color: #ff4444; font-size: 12px; margin-bottom: 5px;"></div>
@@ -551,14 +551,14 @@
 
             <input type="text" id="payment-ref-input" class="auth-input" placeholder="Últimos 4 dígitos o Hash de Referencia">
 
-            <button class="auth-btn" onclick="registrarPagoConReferencia()">Enviar Alerta de Pago a Yordi</button>
+            <button class="auth-btn" onclick="registrarPagoConReferencia()">Registrar Pago y Enviar a Revisión</button>
         </div>
 
         <div id="pending-card" class="auth-card" style="display: none;">
             <h2 style="color: #ffa500;">Pago en Verificación</h2>
             <div style="font-size: 14px; color: #ccc; line-height: 1.6; margin: 15px 0;">
-                <p>¡Notificación enviada a Yordi con éxito!</p>
-                <p style="margin-top: 10px; color: #FFD700;">Tu cuenta se encuentra bloqueada temporalmente hasta que el administrador verifique el pago en el sistema y lo apruebe.</p>
+                <p>Hemos registrado tu reporte de pago exitosamente.</p>
+                <p style="margin-top: 10px; color: #FFD700;">Tu cuenta se encuentra bloqueada temporalmente hasta que el administrador verifique la referencia bancaria en el sistema.</p>
             </div>
             <button class="auth-btn" onclick="cerrarSesion()">Cerrar y Salir</button>
         </div>
@@ -578,7 +578,7 @@
     <div id="adminModal" class="admin-modal">
         <div class="admin-card">
             <h3>Panel Central de Administración - YORDITV</h3>
-            <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Aquí recibes las alertas, apruebas pagos pendientes y controlas accesos.</p>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Aprueba pagos pendientes, revisa referencias y controla accesos.</p>
             
             <div class="admin-controls-top">
                 <button class="admin-action-btn btn-lock-reg" onclick="bloquearRegistros(true)">Bloquear Nuevos Registros</button>
@@ -867,6 +867,7 @@
                         document.getElementById("auth-form-card").style.display = "none";
                         document.getElementById("verify-card").style.display = "block";
                     }, function(error) {
+                        // Salto seguro si el correo de EmailJS falla
                         document.getElementById("auth-form-card").style.display = "none";
                         document.getElementById("verify-card").style.display = "block";
                     });
@@ -922,24 +923,16 @@
 
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
             
-            // CREA LA CUENTA BLOQUEADA HASTA QUE APRUEBES
+            // SE CREA BLOQUEADA HASTA QUE EL ADMIN APRUEBE
             cuentasDB[email] = {
                 plan: plan.toUpperCase(),
-                dias: 0, 
+                dias: 0, // Cero días para bloquear el acceso automático
                 pass: pass,
                 metodo: metodo,
                 ref: ref
             };
 
             localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
-
-            // ENVÍA ALERTA AUTOMÁTICA AL CORREO DEL ADMINISTRADOR (YORDI)
-            let adminParams = {
-                to_email: ADMIN_EMAIL,
-                verification_code: "NUEVO PAGO REGISTRADO: Cliente: " + email + " | Plan: " + plan.toUpperCase() + " | Método: " + metodo + " | Referencia: " + ref
-            };
-
-            emailjs.send('service_i08v5zk', 'template_bxrn83g', adminParams).catch(err => console.log(err));
             
             document.getElementById("payment-card").style.display = "none";
             document.getElementById("pending-card").style.display = "block";
@@ -1081,7 +1074,7 @@
         function aprobarCuentaAdmin(email) {
             let cuentasDB = JSON.parse(localStorage.getItem("yorditv_lista_cuentas")) || {};
             if(cuentasDB[email]) {
-                cuentasDB[email].dias = 30; 
+                cuentasDB[email].dias = 30; // Enciende la cuenta por 30 días
                 localStorage.setItem("yorditv_lista_cuentas", JSON.stringify(cuentasDB));
                 actualizarTablaAdmin();
                 alert("¡Pago aprobado! La cuenta " + email + " ya está activa por 30 días.");
