@@ -3,490 +3,542 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YORDITV</title>
-    <!-- SDK DE FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script>
-        // Configuración oficial extraída de tu archivo de Firebase[cite: 1]
-        const firebaseConfig = {
-            apiKey: "AIzaSyCDNPNMaB5b6NGD3TLa7uTRxz8S6E6O6iI",[cite: 1]
-            authDomain: "yorditv-6575c.firebaseapp.com",[cite: 1]
-            projectId: "yorditv-6575c",[cite: 1]
-            storageBucket: "yorditv-6575c.firebasestorage.app"[cite: 1]
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-    </script>
-    <!-- EmailJS -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <title>YORDITV - Tu Plataforma Privada</title>
+    
     <style>
-        body { background-color: #0f0f0f; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .card-box { background: #1a1a1a; padding: 30px; border-radius: 10px; width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .card-box input { width: 90%; padding: 10px; margin: 10px 0; background: #333; border: 1px solid #444; color: #fff; border-radius: 5px; }
-        .card-box button { width: 95%; padding: 10px; margin-top: 10px; background: #e50914; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .card-box button:hover { background: #b20710; }
-        .plan-option { background: #222; border: 2px solid #444; padding: 10px; margin: 8px 0; border-radius: 5px; cursor: pointer; text-align: left; }
-        .plan-option.selected { border-color: #e50914; background: #2b1619; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #141414; padding: 15px 30px; border-bottom: 1px solid #222; }
-        .catalog { padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .card { background: #1f1f1f; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
-        .card:hover { transform: scale(1.05); }
-        .card img { width: 100%; height: 280px; object-fit: cover; }
-        .card-body { padding: 10px; text-align: center; }
-        .modal-base { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #1c1c1c; padding: 25px; border-radius: 10px; width: 85%; max-width: 600px; color: #fff; max-height: 85vh; overflow-y: auto; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #080808;
+            color: #ffffff;
+            margin-top: 80px;
+        }
+
+        /* Encabezado adaptable */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background-color: rgba(8, 8, 8, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #B8860B;
+            box-shadow: 0 4px 10px rgba(184, 134, 11, 0.2);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* BARRA DE BÚSQUEDA */
+        .search-container {
+            flex-grow: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-bar:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+
+        nav a {
+            color: #d1d1d1;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 16px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: #FFD700;
+            text-shadow: 0 0 15px #FFD700;
+        }
+
+        /* BANNER PRINCIPAL CON TRÁILER AUTOMÁTICO */
+        .hero {
+            min-height: 50vh;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 5%;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid #333;
+            text-align: center;
+        }
+
+        .estreno-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #FFD700;
+            color: #000;
+            padding: 6px 12px;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            z-index: 10;
+        }
+
+        .hero h2 {
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            color: #FFD700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .hero-trailer-container {
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            background: #000;
+        }
+
+        .hero-trailer-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none; /* Evita interacción para que actúe solo como tráiler estático */
+        }
+
+        /* Secciones */
+        .section-title {
+            font-size: clamp(20px, 3vw, 28px);
+            margin: 30px 5% 20px 5%;
+            color: #FFD700;
+            border-left: 5px solid #FFD700;
+            padding-left: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Grid adaptativo para Celular y Smart TV */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 0 5% 30px 5%;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 30px;
+            }
+            .logo { font-size: 36px; }
+            nav a { font-size: 18px; margin-left: 25px; }
+        }
+
+        .card {
+            background-color: #121212;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #222;
+            transition: 0.3s ease-in-out;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        .card:hover, .card:focus {
+            transform: translateY(-8px) scale(1.04);
+            border: 2px solid #FFD700;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
+            outline: none;
+        }
+
+        .card-content {
+            aspect-ratio: 2 / 3;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .card-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-title {
+            padding: 12px 10px;
+            font-size: 14px;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+            background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0.9) 80%);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+        }
+
+        /* REPRODUCTOR FLOTANTE ADAPTABLE */
+        .player-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .player-container {
+            width: 95%;
+            max-width: 960px;
+            background: #000;
+            border: 2px solid #FFD700;
+            border-radius: 12px;
+            overflow: visible;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            position: relative;
+        }
+
+        .video-box {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            position: relative;
+            background: #000;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+
+        .video-box iframe, .video-box video {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* BOTÓN X DE CIERRE */
+        .close-btn {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            color: #FFD700;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2100;
+            transition: all 0.2s ease;
+            background: #e50914;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #FFD700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .close-btn:hover {
+            color: #FFFFFF;
+            background: #ff2a2a;
+            transform: scale(1.15);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        .movie-info-title {
+            padding: 12px;
+            color: #FFD700;
+            font-size: 18px;
+            text-align: center;
+            background: #111;
+            font-weight: bold;
+            border-radius: 0 0 10px 10px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA DE AUTENTICACIÓN / LOGIN / REGISTRO / PAGO -->
-    <div id="auth-overlay">
-        <!-- Formulario Login / Registro -->
-        <div id="auth-form-card" class="card-box">
-            <h2 id="auth-title">YORDITV - Iniciar Sesión</h2>
-            <div id="auth-error" style="color: #ff4d4d; font-size: 14px; margin-bottom: 10px;"></div>
-            <input type="email" id="auth-email" placeholder="Correo electrónico">
-            <input type="password" id="auth-password" placeholder="Contraseña">
+    <!-- Menú Superior con Buscador -->
+    <header>
+        <div class="logo">YORDITV</div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series, comiquitas..." onkeyup="filtrarContenido()">
+        </div>
+        <nav>
+            <a href="#accion">Acción</a>
+            <a href="#comedia">Comedia</a>
+            <a href="#terror">Terror</a>
+            <a href="#series">Series</a>
+            <a href="#comiquitas">Comiquitas</a>
+        </nav>
+    </header>
+
+    <!-- BANNER PRINCIPAL CON TRÁILER DE ESTRENO AUTOMÁTICO -->
+    <div class="hero">
+        <span class="estreno-tag">🔥 GRAN ESTRENO EXCLUSIVO</span>
+        <h2>Tráiler Oficial</h2>
+        <div class="hero-trailer-container">
+            <iframe src="https://www.youtube.com/embed/pqLSLoDkZWE?autoplay=1&mute=1&loop=1&playlist=pqLSLoDkZWE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- SECCIÓN PELÍCULAS DE ACCIÓN -->
+    <h2 class="section-title" id="accion">Películas de Acción</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Falcon Rising', 'https://www.youtube.com/embed/Dt0s95_C1MQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/Dt0s95_C1MQ/hqdefault.jpg" alt="Falcon Rising">
+            </div>
+            <div class="card-title">Falcon Rising</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Nunca Abandonó La Lucha', 'https://www.youtube.com/embed/KaQmKVoBPgM?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/KaQmKVoBPgM/hqdefault.jpg" alt="Nunca Abandonó La Lucha">
+            </div>
+            <div class="card-title">Nunca Abandonó La Lucha</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Furia En La Ciudad', 'https://www.youtube.com/embed/ZSw20goyZ2w?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/ZSw20goyZ2w/hqdefault.jpg" alt="Furia En La Ciudad">
+            </div>
+            <div class="card-title">Furia En La Ciudad</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Operación Rescate', 'https://www.youtube.com/embed/L6n1bpEslXQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/L6n1bpEslXQ/hqdefault.jpg" alt="Operación Rescate">
+            </div>
+            <div class="card-title">Operación Rescate</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Código de Honor', 'https://www.youtube.com/embed/cIxsYRDENh4?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/cIxsYRDENh4/hqdefault.jpg" alt="Código de Honor">
+            </div>
+            <div class="card-title">Código de Honor</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('BOYNE FALLS', 'https://www.youtube.com/embed/KyyYdImpiu8?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/KyyYdImpiu8/hqdefault.jpg" alt="BOYNE FALLS">
+            </div>
+            <div class="card-title">BOYNE FALLS</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Misión Máxima', 'https://www.youtube.com/embed/TcMBFSGVi1c?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/TcMBFSGVi1c/hqdefault.jpg" alt="Misión Máxima">
+            </div>
+            <div class="card-title">Misión Máxima</div>
+        </div>
+
+    </div>
+
+    <!-- SECCIÓN PELÍCULAS DE COMEDIA -->
+    <h2 class="section-title" id="comedia">Películas de Comedia</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Estreno Exclusivo', 'https://www.youtube.com/embed/d6ctQ-ftQTQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/d6ctQ-ftQTQ/hqdefault.jpg" alt="Estreno Exclusivo">
+            </div>
+            <div class="card-title">Estreno Exclusivo</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Gran Estreno', 'https://www.youtube.com/embed/Bykvb4SVspc?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/Bykvb4SVspc/hqdefault.jpg" alt="Gran Estreno">
+            </div>
+            <div class="card-title">Gran Estreno</div>
+        </div>
+
+    </div>
+
+    <!-- SECCIÓN PELÍCULAS DE TERROR -->
+    <h2 class="section-title" id="terror">Películas de Terror</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Destino Final', 'https://www.youtube.com/embed/7PunLcZtuiI?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/7PunLcZtuiI/hqdefault.jpg" alt="Destino Final">
+            </div>
+            <div class="card-title">Destino Final</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Mega Estreno', 'https://www.youtube.com/embed/L10tsbZpHVc?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/L10tsbZpHVc/hqdefault.jpg" alt="Mega Estreno">
+            </div>
+            <div class="card-title">Mega Estreno</div>
+        </div>
+
+    </div>
+
+    <!-- SECCIÓN SERIES -->
+    <h2 class="section-title" id="series">Series</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Tears of Steel', 'https://www.youtube.com/embed/q-xVBL8zRL4?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/q-xVBL8zRL4/hqdefault.jpg" alt="Tears of Steel">
+            </div>
+            <div class="card-title">Tears of Steel</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Estreno Mundial', 'https://www.youtube.com/embed/iZDjW8mNmkk?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/iZDjW8mNmkk/hqdefault.jpg" alt="Estreno Mundial">
+            </div>
+            <div class="card-title">Estreno Mundial</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Nueva Serie', 'https://www.youtube.com/embed/xlfrhUBs1qQ?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/xlfrhUBs1qQ/hqdefault.jpg" alt="Nueva Serie">
+            </div>
+            <div class="card-title">Nueva Serie</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Serie Exclusiva', 'https://www.youtube.com/embed/hVgL_DlebS4?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/hVgL_DlebS4/hqdefault.jpg" alt="Serie Exclusiva">
+            </div>
+            <div class="card-title">Serie Exclusiva</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Temporada Final', 'https://www.youtube.com/embed/9pxgCJTInQA?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/9pxgCJTInQA/hqdefault.jpg" alt="Temporada Final">
+            </div>
+            <div class="card-title">Temporada Final</div>
+        </div>
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Gran Saga', 'https://www.youtube.com/embed/IhzizqSy89w?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/IhzizqSy89w/hqdefault.jpg" alt="Gran Saga">
+            </div>
+            <div class="card-title">Gran Saga</div>
+        </div>
+
+    </div>
+
+    <!-- SECCIÓN COMIQUITAS -->
+    <h2 class="section-title" id="comiquitas">Comiquitas</h2>
+    <div class="grid-container">
+
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Sintel', 'https://www.youtube.com/embed/xEiLU9LeMnA?autoplay=1')">
+            <div class="card-content">
+                <img src="https://img.youtube.com/vi/xEiLU9LeMnA/hqdefault.jpg" alt="Sintel">
+            </div>
+            <div class="card-title">Sintel</div>
+        </div>
+
+    </div>
+
+    <!-- REPRODUCTOR FLOTANTE CON BOTÓN X -->
+    <div id="playerModal" class="player-modal">
+        <div class="player-container">
+            <!-- BOTÓN X SUPERIOR DERECHO -->
+            <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar película">✕</span>
             
-            <div id="extra-fields" style="display:none;">
-                <p style="font-size: 13px; color: #aaa; text-align: left; margin: 5px 0;">Selecciona tu plan:</p>
-                <div class="plan-option" onclick="seleccionarPlan('Básico', 3, 'Plan Básico Mensual')">
-                    <strong>Plan Básico</strong> - $3 / mes
-                </div>
-                <div class="plan-option" onclick="seleccionarPlan('Familiar', 5, 'Plan Familiar Mensual')">
-                    <strong>Plan Familiar</strong> - $5 / mes
-                </div>
-            </div>
-
-            <button id="auth-submit-btn" onclick="manejarAuth()">Ingresar</button>
-            <p id="auth-switch-text" onclick="cambiarModoAuth()" style="cursor:pointer; color:#46d369; font-size: 13px; margin-top: 15px;">¿No tienes cuenta? Regístrate aquí</p>
-        </div>
-
-        <!-- Tarjeta de Verificación por Código (EmailJS) -->
-        <div id="verify-card" class="card-box" style="display:none;">
-            <h2>Verificar Correo</h2>
-            <p style="font-size: 13px; color: #aaa;">Ingresa el código de 4 dígitos enviado a tu bandeja.</p>
-            <input type="text" id="verify-code-input" maxlength="4" placeholder="1234" style="text-align: center; font-size: 20px; letter-spacing: 5px;">
-            <button onclick="verificarCodigo()">Verificar Código</button>
-        </div>
-
-        <!-- Tarjeta de Pago -->
-        <div id="payment-card" class="card-box" style="display:none;">
-            <h2>Pasarela de Pago</h2>
-            <p id="payment-plan-info" style="font-size: 14px; color: #ddd; margin: 15px 0;"></p>
-            <button onclick="simularConfirmacionPago()">Confirmar Pago y Acceder</button>
+            <div id="videoBox" class="video-box"></div>
+            <div id="movieTitle" class="movie-info-title">Cargando...</div>
         </div>
     </div>
 
-    <!-- BARRA SUPERIOR DE NAVEGACIÓN Y ESTADO -->
-    <div id="statusBar" class="top-bar" style="display:none;">
-        <h1 style="color: #e50914; margin: 0; font-size: 24px;">YORDITV</h1>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <input type="text" id="searchInput" placeholder="Buscar películas o series..." onkeyup="filtrarContenido()" style="padding: 6px 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px;">
-            <span style="font-size: 13px; color: #aaa;">Usuario: <strong id="userSessionEmail" style="color:#fff;"></strong></span>
-            <span style="font-size: 13px; color: #aaa;">Días: <strong id="daysRemaining" style="color:#46d369;">30</strong></span>
-            <button onclick="abrirRenovacion()" style="background:#333; border:none; color:#fff; padding:6px 12px; border-radius:4px; cursor:pointer;">Renovar</button>
-            <button onclick="abrirPerfilModal()" style="background:#333; border:none; color:#fff; padding:6px 12px; border-radius:4px; cursor:pointer;">Perfil</button>
-            <button id="adminBtnControl" style="display:none; background:#e50914; border:none; color:#fff; padding:6px 12px; border-radius:4px; cursor:pointer;" onclick="abrirAdminModal()">Admin</button>
-            <button onclick="cerrarSesion()" style="background:#444; border:none; color:#fff; padding:6px 12px; border-radius:4px; cursor:pointer;">Salir</button>
-        </div>
-    </div>
-
-    <!-- CATALOGO PRINCIPAL DE CONTENIDO -->
-    <div id="mainCatalog" class="catalog" style="display:none;">
-        <!-- Ejemplo de tarjeta de contenido -->
-        <div class="card" onclick="reproducirPelicula('Ejemplo Película', 'https://www.w3schools.com/html/mov_bbb.mp4')">
-            <img src="https://via.placeholder.com/200x280/222/fff?text=YordyTV+Movie" alt="Peli">
-            <div class="card-body">
-                <div class="card-title" style="font-weight: bold; font-size: 14px;">Ejemplo Película</div>
-                <div style="font-size: 12px; color: #888;">Acción / Estreno</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE PERFIL -->
-    <div id="profileModal" class="modal-base">
-        <div class="modal-content">
-            <h3>Mi Perfil</h3>
-            <p><strong>Email:</strong> <span id="profEmail"></span></p>
-            <p><strong>Contraseña:</strong> <span id="profPass"></span></p>
-            <p><strong>Plan actual:</strong> <span id="profPlan"></span></p>
-            <br>
-            <button onclick="cerrarPerfilModal()" style="background:#444; color:#fff; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">Cerrar</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE ADMINISTRACIÓN -->
-    <div id="adminModal" class="modal-base">
-        <div class="modal-content" style="width: 90%; max-width: 800px;">
-            <h3>Panel de Administración General</h3>
-            <p id="totalCuentasText" style="color: #46d369;"></p>
-            <p id="statusRegistrosText"></p>
-            <div style="margin: 15px 0;">
-                <button onclick="bloquearRegistros(true)" style="background:#b20710; border:none; color:#fff; padding:6px 12px; border-radius:4px; cursor:pointer; margin-right:10px;">Bloquear Registros</button>
-                <button onclick="bloquearRegistros(false)" style="background:#28a745; border:none; color:#fff; padding:6px 12px; border-radius:4px; cursor:pointer;">Habilitar Registros</button>
-            </div>
-            <table border="1" style="width:100%; margin-top:15px; border-collapse: collapse; border-color: #444; text-align:left; font-size:13px;">
-                <thead>
-                    <tr style="background: #222;">
-                        <th style="padding: 8px;">Email</th>
-                        <th style="padding: 8px;">Plan</th>
-                        <th style="padding: 8px;">Estado / Días</th>
-                        <th style="padding: 8px;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="adminAccountsTableBody"></tbody>
-            </table>
-            <br>
-            <button onclick="cerrarAdminModal()" style="background:#444; color:#fff; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">Cerrar Panel</button>
-        </div>
-    </div>
-
-    <!-- REPRODUCTOR DE VIDEO -->
-    <div id="playerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:2000; flex-direction:column; justify-content:center; align-items:center;">
-        <div style="width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 id="movieTitle" style="color:#fff; margin:0; font-size: 20px;"></h2>
-            <button onclick="cerrarReproductor()" style="background:#e50914; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:bold;">Cerrar Reproductor</button>
-        </div>
-        <div id="videoBox" style="width:90%; height:75%; background:#111; display:flex; justify-content:center; align-items:center;"></div>
-    </div>
-
-    <!-- SCRIPT DE CONTROL Y LOGICA -->
     <script>
-        const ADMIN_EMAIL = "yordiperdomo7@gmail.com";
-        let modoRegistro = false;
-        let planSeleccionado = "";
-        let precioPlan = 0;
-        let detallesPlan = "";
-        let codigoAIEnviado = "";
-
-        // Verificar sesión activa al cargar la página
-        window.onload = function() {
-            let sesionActual = localStorage.getItem("yorditv_sesion");
-            if(sesionActual) {
-                verificarAccesoConcedido(sesionActual);
-            }
-        };
-
-        function cambiarModoAuth() {
-            modoRegistro = !modoRegistro;
-            document.getElementById("auth-error").innerText = "";
-            if(modoRegistro) {
-                document.getElementById("auth-title").innerText = "YORDITV - Registro";
-                document.getElementById("extra-fields").style.display = "block";
-                document.getElementById("auth-submit-btn").innerText = "Registrarse y Pagar";
-                document.getElementById("auth-switch-text").innerText = "¿Ya tienes cuenta? Inicia sesión";
-            } else {
-                document.getElementById("auth-title").innerText = "YORDITV - Iniciar Sesión";
-                document.getElementById("extra-fields").style.display = "none";
-                document.getElementById("auth-submit-btn").innerText = "Ingresar";
-                document.getElementById("auth-switch-text").innerText = "¿No tienes cuenta? Regístrate aquí";
-            }
-        }
-
-        function seleccionarPlan(tipo, precio, descripcion) {
-            planSeleccionado = tipo;
-            precioPlan = precio;
-            detallesPlan = descripcion;
-            document.querySelectorAll(".plan-option").forEach(el => el.classList.remove("selected"));
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add("selected");
-            }
-        }
-
-        async function manejarAuth() {
-            let email = document.getElementById("auth-email").value.trim().toLowerCase();
-            let pass = document.getElementById("auth-password").value.trim();
-            let errorBox = document.getElementById("auth-error");
-
-            if(!email || !pass) {
-                errorBox.innerText = "Por favor completa todos los campos.";
-                return;
-            }
-
-            if(modoRegistro) {
-                let registrosBloqueadosDoc = await db.collection("config").doc("ajustes").get();
-                let registrosBloqueados = registrosBloqueadosDoc.exists ? registrosBloqueadosDoc.data().bloquear_registros : false;
-                
-                if(registrosBloqueados && email !== ADMIN_EMAIL) {
-                    errorBox.innerText = "Registros cerrados temporalmente por el Administrador.";
-                    return;
-                }
-                if(!planSeleccionado && email !== ADMIN_EMAIL) {
-                    errorBox.innerText = "Por favor selecciona un plan de suscripción.";
-                    return;
-                }
-
-                let userDoc = await db.collection("cuentas").doc(email).get();
-                if(userDoc.exists) {
-                    errorBox.innerText = "Este correo ya está registrado.";
-                    return;
-                }
-
-                localStorage.setItem("temp_email", email);
-                localStorage.setItem("temp_pass", pass);
-                localStorage.setItem("temp_plan", planSeleccionado || "Básico");
-
-                codigoAIEnviado = Math.floor(1000 + Math.random() * 9000).toString();
-
-                let templateParams = {
-                    to_email: email,
-                    verification_code: codigoAIEnviado
-                };
-
-                errorBox.style.color = "#FFD700";
-                errorBox.innerText = "Enviando código de verificación a " + email + "...";
-
-                emailjs.send('service_i08v5zk', 'template_bxrn83g', templateParams)
-                    .then(function(response) {
-                        document.getElementById("auth-form-card").style.display = "none";
-                        document.getElementById("verify-card").style.display = "block";
-                    }, function(error) {
-                        console.log('Fallo el envío de EmailJS (Continuando de forma segura):', error);
-                        document.getElementById("auth-form-card").style.display = "none";
-                        document.getElementById("verify-card").style.display = "block";
-                    });
-
-            } else {
-                if(email === ADMIN_EMAIL) {
-                    await db.collection("cuentas").doc(ADMIN_EMAIL).set({
-                        plan: "Administrador General",
-                        dias: 999,
-                        pass: pass || "yordi1234"
-                    }, { merge: true });
-                }
-
-                let userDoc = await db.collection("cuentas").doc(email).get();
-
-                if(userDoc.exists) {
-                    let datosCuenta = userDoc.data();
-                    if(datosCuenta.pass === pass || pass === "yordi1234" || email === ADMIN_EMAIL) {
-                        if(datosCuenta.dias <= 0 && email !== ADMIN_EMAIL) {
-                            localStorage.setItem("temp_email", email);
-                            document.getElementById("auth-form-card").style.display = "none";
-                            document.getElementById("payment-plan-info").innerText = "Tu suscripción está suspendida por falta de pago. Renueva para continuar.";
-                            document.getElementById("payment-card").style.display = "block";
-                            return;
-                        }
-
-                        localStorage.setItem("yorditv_sesion", email);
-                        verificarAccesoConcedido(email);
-                    } else {
-                        errorBox.innerText = "Correo o contraseña incorrectos.";
-                    }
-                } else {
-                    errorBox.innerText = "Cuenta no encontrada o eliminada.";
-                }
-            }
-        }
-
-        function verificarCodigo() {
-            let codigoIngresado = document.getElementById("verify-code-input").value.trim();
-            if(codigoIngresado === codigoAIEnviado || codigoIngresado.length === 4) {
-                document.getElementById("verify-card").style.display = "none";
-                document.getElementById("payment-plan-info").innerText = "Plan elegido: " + (planSeleccionado ? planSeleccionado.toUpperCase() : "BÁSICO") + " — Monto: $" + (precioPlan || 3);
-                document.getElementById("payment-card").style.display = "block";
-            } else {
-                alert("Por favor ingresa un código válido de 4 dígitos.");
-            }
-        }
-
-        async function simularConfirmacionPago() {
-            let email = localStorage.getItem("temp_email") || localStorage.getItem("yorditv_sesion");
-            let pass = localStorage.getItem("temp_pass") || "yordi1234";
-            let plan = localStorage.getItem("temp_plan") || "Básico";
-
-            let nuevoPlan = email === ADMIN_EMAIL ? "Administrador General" : plan.toUpperCase();
-            let nuevosDias = email === ADMIN_EMAIL ? 999 : 30;
-
-            await db.collection("cuentas").doc(email).set({
-                plan: nuevoPlan,
-                dias: nuevosDias,
-                pass: pass
-            });
-
-            localStorage.setItem("yorditv_sesion", email);
-            
-            document.getElementById("payment-card").style.display = "none";
-            verificarAccesoConcedido(email);
-        }
-
-        async function verificarAccesoConcedido(email) {
-            if(email === ADMIN_EMAIL) {
-                await db.collection("cuentas").doc(ADMIN_EMAIL).set({
-                    plan: "Administrador General",
-                    dias: 999,
-                    pass: "yordi1234"
-                }, { merge: true });
-            }
-
-            let userDoc = await db.collection("cuentas").doc(email).get();
-            if(!userDoc.exists) return;
-            let info = userDoc.data();
-
-            if(info.dias <= 0 && email !== ADMIN_EMAIL) {
-                document.getElementById("auth-overlay").style.display = "flex";
-                document.getElementById("auth-form-card").style.display = "none";
-                document.getElementById("payment-card").style.display = "block";
-                document.getElementById("payment-plan-info").innerText = "Tu suscripción ha caducado o fue suspendida por falta de pago.";
-                return;
-            }
-
-            document.getElementById("auth-overlay").style.display = "none";
-            document.getElementById("statusBar").style.display = "flex";
-            document.getElementById("mainCatalog").style.display = "grid";
-            document.getElementById("userSessionEmail").innerText = email;
-            let diasTexto = info.dias === 999 ? "Ilimitados" : info.dias;
-            document.getElementById("daysRemaining").innerText = diasTexto;
-
-            if(email === ADMIN_EMAIL) {
-                document.getElementById("adminBtnControl").style.display = "inline-block";
-            } else {
-                document.getElementById("adminBtnControl").style.display = "none";
-            }
-        }
-
-        function abrirRenovacion() {
-            document.getElementById("auth-overlay").style.display = "flex";
-            document.getElementById("auth-form-card").style.display = "none";
-            document.getElementById("verify-card").style.display = "none";
-            document.getElementById("payment-card").style.display = "block";
-            document.getElementById("payment-plan-info").innerText = "Renovación / Pago anticipado para mantener activa tu suscripción sin interrupciones.";
-        }
-
-        async function abrirPerfilModal() {
-            let email = localStorage.getItem("yorditv_sesion");
-            let userDoc = await db.collection("cuentas").doc(email).get();
-            let info = userDoc.exists ? userDoc.data() : { pass: "yordi1234", plan: "Familiar" };
-
-            document.getElementById("profEmail").innerText = email;
-            document.getElementById("profPass").innerText = info.pass || "yordi1234";
-            document.getElementById("profPlan").innerText = info.plan || "Estándar";
-            document.getElementById("profileModal").style.display = "flex";
-        }
-
-        function cerrarPerfilModal() { document.getElementById("profileModal").style.display = "none"; }
-
-        function abrirAdminModal() {
-            actualizarTablaAdmin();
-            document.getElementById("adminModal").style.display = "flex";
-        }
-
-        function cerrarAdminModal() { document.getElementById("adminModal").style.display = "none"; }
-
-        async function actualizarTablaAdmin() {
-            let tbody = document.getElementById("adminAccountsTableBody");
-            tbody.innerHTML = "";
-
-            let snapshot = await db.collection("cuentas").get();
-            let totalCuentas = snapshot.size;
-            document.getElementById("totalCuentasText").innerText = "Total cuentas activas en Base de Datos: " + totalCuentas;
-
-            let ajustesDoc = await db.collection("config").doc("ajustes").get();
-            let registrosBloqueados = ajustesDoc.exists ? ajustesDoc.data().bloquear_registros : false;
-            document.getElementById("statusRegistrosText").innerText = "Estado de registros: " + (registrosBloqueados ? "BLOQUEADOS" : "ABIERTOS");
-
-            snapshot.forEach(doc => {
-                let email = doc.id;
-                let info = doc.data();
-                let tr = document.createElement("tr");
-
-                let tdEmail = document.createElement("td");
-                tdEmail.style.padding = "8px";
-                tdEmail.innerText = email;
-                tr.appendChild(tdEmail);
-
-                let tdPlan = document.createElement("td");
-                tdPlan.style.padding = "8px";
-                tdPlan.innerText = info.plan || "General";
-                tr.appendChild(tdPlan);
-
-                let tdDias = document.createElement("td");
-                tdDias.style.padding = "8px";
-                tdDias.innerText = info.dias === 999 ? "Ilimitados (Admin)" : info.dias + " días restantes";
-                tr.appendChild(tdDias);
-
-                let tdAcciones = document.createElement("td");
-                tdAcciones.style.padding = "8px";
-                if(email !== ADMIN_EMAIL) {
-                    let btnSuspender = document.createElement("button");
-                    btnSuspender.style.cssText = "background:#ffc107; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; margin-right:5px; font-weight:bold;";
-                    btnSuspender.innerText = info.dias <= 0 ? "Reactivar" : "Suspender";
-                    btnSuspender.onclick = function() { toggleSuspenderCuenta(email, info.dias); };
-                    tdAcciones.appendChild(btnSuspender);
-
-                    let btnEliminar = document.createElement("button");
-                    btnEliminar.style.cssText = "background:#dc3545; color:#fff; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; font-weight:bold;";
-                    btnEliminar.innerText = "Eliminar";
-                    btnEliminar.onclick = function() { eliminarCuentaAdmin(email); };
-                    tdAcciones.appendChild(btnEliminar);
-                } else {
-                    tdAcciones.innerText = "Cuenta Protegida";
-                    tdAcciones.style.color = "#888";
-                }
-
-                tr.appendChild(tdAcciones);
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function toggleSuspenderCuenta(email, diasActuales) {
-            if(email === ADMIN_EMAIL) return;
-            let nuevosDias = diasActuales > 0 ? 0 : 30;
-            await db.collection("cuentas").doc(email).update({ dias: nuevosDias });
-            actualizarTablaAdmin();
-        }
-
-        async function eliminarCuentaAdmin(email) {
-            if(email === ADMIN_EMAIL) { alert("No puedes eliminar la cuenta maestra."); return; }
-            if(confirm("¿Estás seguro de eliminar permanentemente la cuenta " + email + "?")) {
-                await db.collection("cuentas").doc(email).delete();
-                actualizarTablaAdmin();
-            }
-        }
-
-        async function bloquearRegistros(bloquear) {
-            await db.collection("config").doc("ajustes").set({ bloquear_registros: bloquear }, { merge: true });
-            actualizarTablaAdmin();
-            alert(bloquear ? "Registros bloqueados con éxito." : "Registros habilitados nuevamente.");
-        }
-
-        function cerrarSesion() { 
-            localStorage.removeItem("yorditv_sesion"); 
-            location.reload(); 
-        }
-
         function reproducirPelicula(titulo, urlVideo) {
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
             var movieTitle = document.getElementById('movieTitle');
+
             movieTitle.innerText = titulo;
 
-            if (urlVideo.endsWith('.mp4') || urlVideo.includes('w3schools')) {
+            if (urlVideo.endsWith('.mp4')) {
                 videoBox.innerHTML = '<video controls autoplay style="width:100%; height:100%; background:#000;"><source src="' + urlVideo + '" type="video/mp4">Tu navegador no soporta este video.</video>';
             } else {
                 videoBox.innerHTML = '<iframe src="' + urlVideo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>';
             }
+            
             modal.style.display = 'flex';
         }
 
         function cerrarReproductor() {
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
-            videoBox.innerHTML = '';
+            
+            videoBox.innerHTML = ''; 
             modal.style.display = 'none';
         }
 
+        // Función de Búsqueda Dinámica
         function filtrarContenido() {
             var input = document.getElementById('searchInput').value.toLowerCase();
             var cards = document.querySelectorAll('.card');
+
             cards.forEach(function(card) {
                 var title = card.querySelector('.card-title').innerText.toLowerCase();
-                card.style.display = title.includes(input) ? "" : "none";
+                if (title.includes(input)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
             });
         }
+
+        // Permite cerrar presionando la tecla ESC en computadoras
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarReproductor();
+            }
+        });
     </script>
+
 </body>
 </html>
