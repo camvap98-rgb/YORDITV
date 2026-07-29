@@ -9,8 +9,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #080808; color: #ffffff; }
 
-        /* PANTALLA DE LOGIN Y REGISTRO BLOQUEADA */
-        #loginScreen {
+        /* PANTALLAS DE ACCESO (LOGIN Y REGISTRO) */
+        .auth-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -24,7 +24,7 @@
             padding: 20px;
         }
 
-        .login-box {
+        .auth-box {
             background: #121212;
             padding: 40px;
             border-radius: 15px;
@@ -35,7 +35,7 @@
             text-align: center;
         }
 
-        .login-logo {
+        .auth-logo {
             font-size: 32px;
             font-weight: bold;
             background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700);
@@ -46,7 +46,7 @@
             letter-spacing: 2px;
         }
 
-        .login-input {
+        .auth-input {
             width: 100%;
             padding: 12px 15px;
             margin-bottom: 15px;
@@ -59,12 +59,12 @@
             transition: 0.3s;
         }
 
-        .login-input:focus {
+        .auth-input:focus {
             border-color: #FFD700;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
-        .login-btn {
+        .auth-btn {
             width: 100%;
             padding: 12px;
             background: linear-gradient(45deg, #FFD700, #FFA500);
@@ -78,35 +78,36 @@
             margin-top: 5px;
         }
 
-        .login-btn:hover {
+        .auth-btn:hover {
             transform: scale(1.02);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
         }
 
-        .login-error {
+        .auth-error {
             color: #ff4d4d;
             font-size: 13px;
             margin-top: 15px;
             display: none;
         }
 
-        .register-link {
+        .auth-link {
             margin-top: 20px;
             font-size: 14px;
             color: #aaa;
         }
 
-        .register-link a {
+        .auth-link a {
             color: #FFD700;
             text-decoration: none;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        .register-link a:hover {
+        .auth-link a:hover {
             text-decoration: underline;
         }
 
-        /* PLATAFORMA PRINCIPAL (OCULTA POR DEFECTO) */
+        /* PLATAFORMA PRINCIPAL */
         #mainPlatform {
             display: none;
             margin-top: 80px;
@@ -114,7 +115,21 @@
 
         header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: rgba(8, 8, 8, 0.95); position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 2px solid #B8860B; box-shadow: 0 4px 10px rgba(184, 134, 11, 0.2); flex-wrap: wrap; gap: 15px; }
         .logo { font-size: 28px; font-weight: bold; background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255, 215, 0, 0.7); letter-spacing: 2px; text-transform: uppercase; }
-        .search-container { flex-grow: 1; max-width: 400px; margin: 0 20px; }
+        
+        .subscription-timer {
+            background: rgba(184, 134, 11, 0.15);
+            border: 1px solid #B8860B;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #FFD700;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-container { flex-grow: 1; max-width: 350px; margin: 0 20px; }
         .search-bar { width: 100%; padding: 10px 15px; background-color: #1a1a1a; border: 1px solid #333; border-radius: 25px; color: #fff; font-size: 14px; outline: none; transition: 0.3s; }
         .search-bar:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
         .nav-right { display: flex; align-items: center; gap: 15px; }
@@ -161,17 +176,34 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE INICIO DE SESIÓN Y REGISTRO -->
-    <div id="loginScreen">
-        <div class="login-box">
-            <div class="login-logo">YORDITV</div>
-            <input type="email" id="loginEmail" class="login-input" placeholder="Correo electrónico">
-            <input type="password" id="loginPassword" class="login-input" placeholder="Contraseña">
-            <button class="login-btn" onclick="iniciarSesion()">Entrar a YORDITV</button>
-            <div id="loginError" class="login-error">Correo o contraseña incorrectos.</div>
+    <!-- PANTALLA DE INICIO DE SESIÓN -->
+    <div id="loginScreen" class="auth-screen">
+        <div class="auth-box">
+            <div class="auth-logo">YORDITV</div>
+            <input type="email" id="loginEmail" class="auth-input" placeholder="Correo electrónico">
+            <input type="password" id="loginPassword" class="auth-input" placeholder="Contraseña">
+            <button class="auth-btn" onclick="iniciarSesion()">Entrar a YORDITV</button>
+            <div id="loginError" class="auth-error">Correo o contraseña incorrectos.</div>
             
-            <div class="register-link">
-                ¿No tienes cuenta? <a href="#" onclick="registrarNuevoUsuario()">Regístrese aquí</a>
+            <div class="auth-link">
+                ¿No tienes cuenta? <a onclick="mostrarRegistro()">Regístrese aquí</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE REGISTRO NUEVO -->
+    <div id="registerScreen" class="auth-screen" style="display: none;">
+        <div class="auth-box">
+            <div class="auth-logo">REGISTRO</div>
+            <input type="email" id="regEmail" class="auth-input" placeholder="Correo electrónico">
+            <input type="password" id="regPassword" class="auth-input" placeholder="Crear contraseña">
+            <input type="number" id="regEdad" class="auth-input" placeholder="Edad">
+            <input type="text" id="regCodigo" class="auth-input" placeholder="Código de invitado (Opcional)">
+            <button class="auth-btn" onclick="procesarRegistro()">Completar Registro</button>
+            <div id="regError" class="auth-error">Complete todos los campos obligatorios.</div>
+            
+            <div class="auth-link">
+                ¿Ya tienes cuenta? <a onclick="mostrarLogin()">Inicia sesión</a>
             </div>
         </div>
     </div>
@@ -180,8 +212,11 @@
     <div id="mainPlatform">
         <header>
             <div class="logo">YORDITV</div>
+            <div id="timerContainer" class="subscription-timer" style="display: none;">
+                ⏳ Tiempo restante: <span id="diasRestantes">30</span> días
+            </div>
             <div class="search-container">
-                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series, comiquitas..." onkeyup="filtrarContenido()">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series..." onkeyup="filtrarContenido()">
             </div>
             <div class="nav-right">
                 <nav>
@@ -228,7 +263,7 @@
     </div>
 
     <script>
-        // LISTA DE CUENTAS AUTORIZADAS
+        // BASE DE DATOS LOCAL DE CUENTAS AUTORIZADAS
         const cuentasValidas = {
             "administracion@yorditv.com": "14082024.",
             "familia1@yorditv.com": "Familia1",
@@ -239,56 +274,102 @@
             "familia6@yorditv.com": "Familia6"
         };
 
+        function mostrarRegistro() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'flex';
+        }
+
+        function mostrarLogin() {
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+
         function iniciarSesion() {
             var email = document.getElementById('loginEmail').value.trim().toLowerCase();
             var pass = document.getElementById('loginPassword').value.trim();
             var errorDiv = document.getElementById('loginError');
 
             if (cuentasValidas[email] && cuentasValidas[email] === pass) {
-                // Guardar estado de sesión válida
                 localStorage.setItem("yorditv_sesion_activa", "true");
                 localStorage.setItem("yorditv_usuario_actual", email);
                 
-                // Registrar acceso en la nube de Firebase
-                registrarAccesoEnNube(email);
+                // Marcar que es cuenta privilegiada (sin reloj de pago)
+                if (email === "administracion@yorditv.com" || email.startsWith("familia")) {
+                    localStorage.setItem("yorditv_exenta", "true");
+                } else {
+                    localStorage.setItem("yorditv_exenta", "false");
+                    if(!localStorage.getItem("yorditv_vencimiento")) {
+                        // 30 días de prueba por defecto al registrarse/entrar
+                        var fechaVencimiento = new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
+                        localStorage.setItem("yorditv_vencimiento", fechaVencimiento);
+                    }
+                }
 
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainPlatform').style.display = 'block';
+                registrarAccesoEnNube(email, "inicio_sesion");
+                cargarPlataforma();
             } else {
-                errorDiv.innerText = "Correo o contraseña incorrectos.";
                 errorDiv.style.display = 'block';
             }
         }
 
-        function registrarNuevoUsuario() {
-            var email = prompt("Ingrese su correo electrónico para registrarse:");
-            if (!email) return;
-            var pass = prompt("Cree una contraseña para su cuenta:");
-            if (!pass) return;
+        function procesarRegistro() {
+            var email = document.getElementById('regEmail').value.trim().toLowerCase();
+            var pass = document.getElementById('regPassword').value.trim();
+            var edad = document.getElementById('regEdad').value.trim();
+            var codigo = document.getElementById('regCodigo').value.trim();
+            var errorDiv = document.getElementById('regError');
 
-            email = email.trim().toLowerCase();
-            
-            // Guardar localmente y en la nube
+            if (!email || !pass || !edad) {
+                errorDiv.style.display = 'block';
+                return;
+            }
+
             cuentasValidas[email] = pass;
-            registrarNuevoEnNube(email, pass);
-            alert("¡Registro exitoso! Ahora inicie sesión con su nuevo correo y contraseña.");
+            registrarRegistroEnNube(email, pass, edad, codigo);
+            
+            alert("¡Registro exitoso! Ya puedes iniciar sesión.");
+            mostrarLogin();
         }
 
         function cerrarSesion() {
             localStorage.removeItem("yorditv_sesion_activa");
             localStorage.removeItem("yorditv_usuario_actual");
+            localStorage.removeItem("yorditv_exenta");
             location.reload();
         }
 
-        // CONTROL DE ACCESO ESTRICTO (Bloquea si no hay sesión real)
-        window.onload = function() {
-            var sesionActiva = localStorage.getItem("yorditv_sesion_activa");
-            if (sesionActiva === "true") {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainPlatform').style.display = 'block';
+        function cargarPlataforma() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('mainPlatform').style.display = 'block';
+
+            var esExenta = localStorage.getItem("yorditv_exenta") === "true";
+            
+            if (!esExenta) {
+                document.getElementById('timerContainer').style.display = 'flex';
+                actualizarRelojDias();
+                setInterval(actualizarRelojDias, 1000 * 60); // Actualizar cada minuto
+            }
+        }
+
+        function actualizarRelojDias() {
+            var vencimiento = localStorage.getItem("yorditv_vencimiento");
+            if (!vencimiento) return;
+
+            var ahora = new Date().getTime();
+            var distancia = vencimiento - ahora;
+
+            if (distancia < 0) {
+                document.getElementById('diasRestantes').innerText = "0 (Vencido)";
             } else {
-                document.getElementById('loginScreen').style.display = 'flex';
-                document.getElementById('mainPlatform').style.display = 'none';
+                var dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+                document.getElementById('diasRestantes').innerText = dias;
+            }
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem("yorditv_sesion_activa") === "true") {
+                cargarPlataforma();
             }
         };
 
@@ -330,7 +411,7 @@
         });
     </script>
 
-    <!-- SDKs de Firebase para guardar registros en la nube -->
+    <!-- SDKs de Firebase para la nube -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
@@ -345,24 +426,26 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        function registrarAccesoEnNube(correoUsuario) {
+        function registrarAccesoEnNube(correoUsuario, tipoAccion) {
             db.collection("usuarios_registrados").add({
                 correo: correoUsuario,
-                tipo: "inicio_sesion",
+                tipo: tipoAccion,
                 fechaIngreso: new Date().toLocaleString()
             }).catch(function(error) {
-                console.error("Error al registrar acceso: ", error);
+                console.error("Error al registrar en nube: ", error);
             });
         }
 
-        function registrarNuevoEnNube(correoUsuario, passwordUsuario) {
+        function registrarRegistroEnNube(correoUsuario, passwordUsuario, edadUsuario, codigoInvitado) {
             db.collection("usuarios_registrados").add({
                 correo: correoUsuario,
                 clave: passwordUsuario,
-                tipo: "nuevo_registro",
+                edad: edadUsuario,
+                codigoInvitado: codigoInvitado || "Ninguno",
+                tipo: "nuevo_registro_cliente",
                 fechaIngreso: new Date().toLocaleString()
             }).catch(function(error) {
-                console.error("Error al registrar nuevo usuario: ", error);
+                console.error("Error al registrar nuevo cliente: ", error);
             });
         }
     </script>
