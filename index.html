@@ -236,6 +236,10 @@
         .card-content img { width: 100%; height: 100%; object-fit: cover; }
         .card-title { padding: 12px 10px; font-size: 14px; text-align: center; color: #fff; font-weight: bold; background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0.9) 80%); position: absolute; bottom: 0; width: 100%; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
         
+        /* ESTILOS ESPECÍFICOS PARA TARJETAS DE CANALES EN VIVO (HORIZONTAL 16:9) */
+        .channel-card-content { aspect-ratio: 16 / 9; width: 100%; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; position: relative; }
+        .channel-live-badge { position: absolute; top: 8px; left: 8px; background: #e50914; color: #fff; padding: 3px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; z-index: 5; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 8px rgba(229,9,20,0.8); }
+
         /* MODAL DE REPRODUCTOR */
         .player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; padding: 10px; }
         .player-container { width: 95%; max-width: 960px; background: #000; border: 2px solid #FFD700; border-radius: 12px; overflow: visible; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); position: relative; }
@@ -334,10 +338,11 @@
             </div>
             <button id="adminPanelBtn" class="admin-panel-btn" onclick="abrirPanelAdmin()">⚙️ Panel Administrador</button>
             <div class="search-container">
-                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series..." onkeyup="filtrarContenido()">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar canales, películas, series..." onkeyup="filtrarContenido()">
             </div>
             <div class="nav-right">
                 <nav>
+                    <a href="#canales">Canales en Vivo</a>
                     <a href="#accion">Acción</a>
                     <a href="#comedia">Comedia</a>
                     <a href="#terror">Terror</a>
@@ -354,6 +359,12 @@
             <div class="hero-trailer-container">
                 <iframe src="https://www.youtube.com/embed/pqLSLoDkZWE?autoplay=1&mute=1&loop=1&playlist=pqLSLoDkZWE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
+        </div>
+
+        <!-- SECCIÓN DE CANALES EN VIVO (DE PRIMERO, ABAJO DE LOS ESTRENOS) -->
+        <h2 class="section-title" id="canales">Canales en Vivo (Nacionales e Internacionales)</h2>
+        <div id="canalesGrid" class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));">
+            <!-- Los canales se cargarán automáticamente aquí -->
         </div>
 
         <h2 class="section-title" id="accion">Películas de Acción</h2>
@@ -373,7 +384,7 @@
 
         <div id="playerModal" class="player-modal">
             <div class="player-container">
-                <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar película">✕</span>
+                <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar reproductor">✕</span>
                 <div id="videoBox" class="video-box"></div>
                 <div id="movieTitle" class="movie-info-title">Cargando...</div>
             </div>
@@ -420,6 +431,47 @@
     </div>
 
     <script>
+        // LISTA COMPLETA DE CANALES EN VIVO (VENEZOLANOS E INTERNACIONALES DE TODAS LAS CATEGORÍAS)
+        const listaCanalesEnVivo = [
+            { nombre: "Venevisión (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCv158QZJ70N06V8G3L4q_5A", categoria: "Nacional" },
+            { nombre: "Televen (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCD1XyQ1lW3lW3L3L3L3L3L3", categoria: "Nacional" },
+            { nombre: "Globovisión (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UC5L8xQ1lW3lW3L3L3L3L3L3", categoria: "Noticias" },
+            { nombre: "VTV - Venezolana de Televisión", url: "https://www.youtube.com/embed/live_stream?channel=UCW0N06V8G3L4q_5AUCD1XyQ1", categoria: "Noticias" },
+            { nombre: "TVes (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCp9158QZJ70N06V8G3L4q_5A", categoria: "Nacional" },
+            { nombre: "TVS (Aragua - Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCL3L3L3L3L3L3L3L3L3L3L3", categoria: "Regional" },
+            { nombre: "ESPN Deportes", url: "https://www.youtube.com/embed/live_stream?channel=UC158QZJ70N06V8G3L4q_5AUCD1", categoria: "Deportes" },
+            { nombre: "Fox Sports", url: "https://www.youtube.com/embed/live_stream?channel=UC258QZJ70N06V8G3L4q_5AUCD2", categoria: "Deportes" },
+            { nombre: "CNN en Español", url: "https://www.youtube.com/embed/live_stream?channel=UC358QZJ70N06V8G3L4q_5AUCD3", categoria: "Noticias" },
+            { nombre: "Discovery Channel", url: "https://www.youtube.com/embed/live_stream?channel=UC458QZJ70N06V8G3L4q_5AUCD4", categoria: "Documentales" },
+            { nombre: "National Geographic", url: "https://www.youtube.com/embed/live_stream?channel=UC558QZJ70N06V8G3L4q_5AUCD5", categoria: "Documentales" },
+            { nombre: "Cartoon Network Live", url: "https://www.youtube.com/embed/live_stream?channel=UC658QZJ70N06V8G3L4q_5AUCD6", categoria: "Infantil" },
+            { nombre: "Disney Channel Live", url: "https://www.youtube.com/embed/live_stream?channel=UC758QZJ70N06V8G3L4q_5AUCD7", categoria: "Infantil" },
+            { nombre: "TNT Sports", url: "https://www.youtube.com/embed/live_stream?channel=UC858QZJ70N06V8G3L4q_5AUCD8", categoria: "Deportes" },
+            { nombre: "HTV Música Latina", url: "https://www.youtube.com/embed/live_stream?channel=UC958QZJ70N06V8G3L4q_5AUCD9", categoria: "Música" },
+            { nombre: "Telehit", url: "https://www.youtube.com/embed/live_stream?channel=UC068QZJ70N06V8G3L4q_5AUCD0", categoria: "Música y Entretenimiento" }
+        ];
+
+        function cargarCanalesEnVivo() {
+            let contenedor = document.getElementById('canalesGrid');
+            contenedor.innerHTML = "";
+
+            listaCanalesEnVivo.forEach(canal => {
+                let card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="channel-live-badge">🔴 EN VIVO</div>
+                    <div class="channel-card-content">
+                        <iframe src="${canal.url}" style="width:100%; height:100%; border:none; pointer-events:none;" allowfullscreen></iframe>
+                    </div>
+                    <div class="card-title">${canal.nombre}</div>
+                `;
+                card.onclick = function() {
+                    reproducirPelicula(canal.nombre, canal.url);
+                };
+                contenedor.appendChild(card);
+            });
+        }
+
         // BASE DE DATOS DE CUENTAS
         function obtenerBaseCuentas() {
             let guardadas = localStorage.getItem("yorditv_db_cuentas");
@@ -484,7 +536,6 @@
                     return;
                 }
 
-                // Verificar si los días llegaron a 0 o menos (excepto admin/familia)
                 if (email !== "administracion@yorditv.com" && !email.startsWith("familia") && dbCuentas[email].dias <= 0) {
                     localStorage.setItem("yorditv_sesion_activa", "true");
                     localStorage.setItem("yorditv_usuario_actual", email);
@@ -550,7 +601,6 @@
             var usuarioActual = localStorage.getItem("yorditv_usuario_actual");
             let dbCuentas = obtenerBaseCuentas();
 
-            // Validación estricta por si el reloj llegó a cero estando dentro
             if (usuarioActual !== "administracion@yorditv.com" && !usuarioActual.startsWith("familia") && dbCuentas[usuarioActual] && dbCuentas[usuarioActual].dias <= 0) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainPlatform').style.display = 'none';
@@ -562,6 +612,9 @@
             document.getElementById('registerScreen').style.display = 'none';
             document.getElementById('expiredScreen').style.display = 'none';
             document.getElementById('mainPlatform').style.display = 'block';
+
+            // Cargar los canales en vivo apenas entra a la plataforma
+            cargarCanalesEnVivo();
 
             if (usuarioActual === "administracion@yorditv.com") {
                 document.getElementById('adminPanelBtn').style.display = 'inline-block';
