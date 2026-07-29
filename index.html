@@ -9,7 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #080808; color: #ffffff; }
 
-        /* PANTALLA DE LOGIN */
+        /* PANTALLA DE LOGIN Y REGISTRO BLOQUEADA */
         #loginScreen {
             position: fixed;
             top: 0;
@@ -90,7 +90,23 @@
             display: none;
         }
 
-        /* PLATAFORMA PRINCIPAL (OCULTA HASTA LOGuear) */
+        .register-link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .register-link a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* PLATAFORMA PRINCIPAL (OCULTA POR DEFECTO) */
         #mainPlatform {
             display: none;
             margin-top: 80px;
@@ -145,7 +161,7 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE INICIO DE SESIÓN -->
+    <!-- PANTALLA DE INICIO DE SESIÓN Y REGISTRO -->
     <div id="loginScreen">
         <div class="login-box">
             <div class="login-logo">YORDITV</div>
@@ -153,6 +169,10 @@
             <input type="password" id="loginPassword" class="login-input" placeholder="Contraseña">
             <button class="login-btn" onclick="iniciarSesion()">Entrar a YORDITV</button>
             <div id="loginError" class="login-error">Correo o contraseña incorrectos.</div>
+            
+            <div class="register-link">
+                ¿No tienes cuenta? <a href="#" onclick="registrarNuevoUsuario()">Regístrese aquí</a>
+            </div>
         </div>
     </div>
 
@@ -208,7 +228,7 @@
     </div>
 
     <script>
-        // BASE DE DATOS DE CUENTAS AUTORIZADAS
+        // LISTA DE CUENTAS AUTORIZADAS
         const cuentasValidas = {
             "administracion@yorditv.com": "14082024.",
             "familia1@yorditv.com": "Familia1",
@@ -225,29 +245,50 @@
             var errorDiv = document.getElementById('loginError');
 
             if (cuentasValidas[email] && cuentasValidas[email] === pass) {
-                // Guardar en la memoria del navegador que ya inició sesión
-                localStorage.setItem("yorditv_sesion", email);
+                // Guardar estado de sesión válida
+                localStorage.setItem("yorditv_sesion_activa", "true");
+                localStorage.setItem("yorditv_usuario_actual", email);
                 
-                // Guardar registro del inicio de sesión en la nube de Firebase de forma automática
+                // Registrar acceso en la nube de Firebase
                 registrarAccesoEnNube(email);
 
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainPlatform').style.display = 'block';
             } else {
+                errorDiv.innerText = "Correo o contraseña incorrectos.";
                 errorDiv.style.display = 'block';
             }
         }
 
+        function registrarNuevoUsuario() {
+            var email = prompt("Ingrese su correo electrónico para registrarse:");
+            if (!email) return;
+            var pass = prompt("Cree una contraseña para su cuenta:");
+            if (!pass) return;
+
+            email = email.trim().toLowerCase();
+            
+            // Guardar localmente y en la nube
+            cuentasValidas[email] = pass;
+            registrarNuevoEnNube(email, pass);
+            alert("¡Registro exitoso! Ahora inicie sesión con su nuevo correo y contraseña.");
+        }
+
         function cerrarSesion() {
-            localStorage.removeItem("yorditv_sesion");
+            localStorage.removeItem("yorditv_sesion_activa");
+            localStorage.removeItem("yorditv_usuario_actual");
             location.reload();
         }
 
-        // Revisar si ya había iniciado sesión antes
+        // CONTROL DE ACCESO ESTRICTO (Bloquea si no hay sesión real)
         window.onload = function() {
-            if (localStorage.getItem("yorditv_sesion")) {
+            var sesionActiva = localStorage.getItem("yorditv_sesion_activa");
+            if (sesionActiva === "true") {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainPlatform').style.display = 'block';
+            } else {
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('mainPlatform').style.display = 'none';
             }
         };
 
@@ -289,7 +330,7 @@
         });
     </script>
 
-    <!-- SDKs de Firebase para guardar los registros de acceso en la nube -->
+    <!-- SDKs de Firebase para guardar registros en la nube -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
@@ -307,9 +348,21 @@
         function registrarAccesoEnNube(correoUsuario) {
             db.collection("usuarios_registrados").add({
                 correo: correoUsuario,
+                tipo: "inicio_sesion",
                 fechaIngreso: new Date().toLocaleString()
             }).catch(function(error) {
-                console.error("Error al registrar en la nube: ", error);
+                console.error("Error al registrar acceso: ", error);
+            });
+        }
+
+        function registrarNuevoEnNube(correoUsuario, passwordUsuario) {
+            db.collection("usuarios_registrados").add({
+                correo: correoUsuario,
+                clave: passwordUsuario,
+                tipo: "nuevo_registro",
+                fechaIngreso: new Date().toLocaleString()
+            }).catch(function(error) {
+                console.error("Error al registrar nuevo usuario: ", error);
             });
         }
     </script>
