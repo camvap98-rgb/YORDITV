@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Reproductores de video profesionales para IPTV -->
-    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YORDITV - Tu Plataforma Privada</title>
 
@@ -231,8 +228,11 @@
         /* ESTILOS PARA LA SECCIÓN IPTV INTEGRADA */
         .iptv-main-container { padding: 0 5%; margin-bottom: 40px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         @media (max-width: 900px) { .iptv-main-container { grid-template-columns: 1fr; } }
-        .reproductor-seccion { width: 100%; background: #000; border: 2px solid #FFD700; border-radius: 12px; overflow: hidden; box-shadow: 0 0 25px rgba(255,215,0,0.3); }
-        .video-js { width: 100%; aspect-ratio: 16 / 9; }
+        .reproductor-seccion { width: 100%; background: #000; border: 2px solid #FFD700; border-radius: 12px; overflow: hidden; box-shadow: 0 0 25px rgba(255,215,0,0.3); position: relative; }
+        
+        /* Reproductor nativo limpio */
+        #reproductor-tv { width: 100%; aspect-ratio: 16 / 9; background: #000; outline: none; }
+
         .lista-seccion { background: #121212; border: 1px solid #333; border-radius: 12px; padding: 15px; max-height: 450px; display: flex; flex-direction: column; }
         .lista-titulo { font-size: 16px; font-weight: bold; color: #FFD700; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 8px; }
         #cargando { font-size: 13px; color: #aaa; text-align: center; padding: 10px; }
@@ -424,8 +424,9 @@
         <h2 class="section-title" id="canales">Televisión Global y Canales en Vivo</h2>
         <div class="iptv-main-container">
             <div class="reproductor-seccion">
-                <video id="reproductor-tv" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
-                    <p class="vjs-no-js">Para ver este video, por favor activa JavaScript o usa un navegador compatible.</p>
+                <!-- Reproductor nativo limpio con hls habilitado para evitar bloqueos -->
+                <video id="reproductor-tv" controls autoplay playsinline poster="https://images.unsplash.com/photo-1543536448-d209d2d13a1c?w=800&auto=format&fit=crop&q=60">
+                    Tu navegador no soporta la reproducción de video en directo.
                 </video>
             </div>
             <div class="lista-seccion">
@@ -902,20 +903,9 @@
         }
     </script>
 
-    <!-- MOTOR IPTV BLINDADO CON ENLACE M3U OFICIAL -->
+    <!-- CARGADOR IPTV OPTIMIZADO CON REPRODUCTOR NATIVO ANTI-BUCLE -->
     <script>
-        const player = videojs('reproductor-tv', {
-            fluid: true,
-            responsive: true,
-            html5: {
-                vhs: {
-                    overrideNative: true
-                }
-            }
-        });
-
         let todosLosCanales = [];
-        // Enlace M3U oficial corregido para evitar la tabla CSV
         const urlIPTV = 'https://iptv-org.github.io/iptv/index.m3u';
 
         async function cargarCanales() {
@@ -940,11 +930,8 @@
                     let nombre = partes[partes.length - 1] || "Canal sin nombre";
                     canalActual = { nombre: nombre };
                 } else if (linea.startsWith('http') && canalActual) {
-                    // Filtramos enlaces problemáticos para evitar el error de procesamiento
-                    if (!linea.includes('.ts') || linea.includes('m3u8')) {
-                        canalActual.url = linea;
-                        todosLosCanales.push(canalActual);
-                    }
+                    canalActual.url = linea;
+                    todosLosCanales.push(canalActual);
                     canalActual = null;
                 }
             }
@@ -969,24 +956,25 @@
                 li.addEventListener('click', () => {
                     document.querySelectorAll('#lista-canales li').forEach(el => el.classList.remove('activo'));
                     li.classList.add('activo');
-                    cambiarCanal(canal.url);
+                    cambiarCanal(canal.url, canal.nombre);
                 });
                 listaUL.appendChild(li);
             });
         }
 
-        function cambiarCanal(url) {
-            try {
-                player.src({
-                    src: url,
-                    type: 'application/x-mpegURL'
-                });
-                player.play().catch(error => {
-                    console.warn("Stream no disponible temporalmente:", error);
-                });
-            } catch (e) {
-                alert("Este canal tiene protección o está offline en este momento.");
-            }
+        function cambiarCanal(url, nombre) {
+            const videoElement = document.getElementById('reproductor-tv');
+            videoElement.pause();
+            videoElement.removeAttribute('src');
+            videoElement.load();
+
+            videoElement.src = url;
+            videoElement.play().then(() => {
+                console.log("Reproduciendo: " + nombre);
+            }).catch(error => {
+                console.warn("El stream de este canal está offline o bloqueado:", error);
+                alert("El canal '" + nombre + "' no transmitió señal o está caído en este momento. Prueba con otro.");
+            });
         }
 
         document.getElementById('buscador').addEventListener('input', (e) => {
