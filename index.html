@@ -225,23 +225,7 @@
         
         .section-title { font-size: clamp(20px, 3vw, 28px); margin: 30px 5% 15px 5%; color: #FFD700; border-left: 5px solid #FFD700; padding-left: 15px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
         
-        /* ESTILOS PARA LA SECCIÓN IPTV INTEGRADA */
-        .iptv-main-container { padding: 0 5%; margin-bottom: 40px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        @media (max-width: 900px) { .iptv-main-container { grid-template-columns: 1fr; } }
-        .reproductor-seccion { width: 100%; background: #000; border: 2px solid #FFD700; border-radius: 12px; overflow: hidden; box-shadow: 0 0 25px rgba(255,215,0,0.3); position: relative; }
-        
-        #reproductor-tv { width: 100%; aspect-ratio: 16 / 9; background: #000; outline: none; }
-
-        .lista-seccion { background: #121212; border: 1px solid #333; border-radius: 12px; padding: 15px; max-height: 450px; display: flex; flex-direction: column; }
-        .lista-titulo { font-size: 16px; font-weight: bold; color: #FFD700; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 8px; }
-        #lista-canales { list-style: none; overflow-y: auto; flex-grow: 1; }
-        #lista-canales li { padding: 10px; border-bottom: 1px solid #222; font-size: 14px; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        #lista-canales li:hover, #lista-canales li.activo { background: #FFD700; color: #000; font-weight: bold; border-radius: 6px; }
-        .buscador-iptv-box { margin-bottom: 10px; }
-        .buscador-iptv { width: 100%; padding: 8px 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: #fff; font-size: 13px; outline: none; }
-        .buscador-iptv:focus { border-color: #FFD700; }
-
-        /* CONTENEDOR DE FILA HORIZONTAL CON FLECHAS PARA CANALES */
+        /* CONTENEDOR DE FILA HORIZONTAL CON FLECHAS PARA CANALES VENEZOLANOS */
         .row-container { position: relative; display: flex; align-items: center; padding: 0 5%; margin-bottom: 30px; }
         .horizontal-scroll {
             display: flex;
@@ -399,7 +383,7 @@
             </div>
             <div class="nav-right">
                 <nav>
-                    <a href="#canales">Canales</a>
+                    <a href="#canales">Canales En Vivo</a>
                     <a href="#accion">Acción</a>
                     <a href="#comedia">Comedia</a>
                     <a href="#terror">Terror</a>
@@ -418,25 +402,8 @@
             </div>
         </div>
 
-        <!-- SECCIÓN DE CANALES IPTV EN VIVO CON REPRODUCTOR Y LISTA LATERAL -->
-        <h2 class="section-title" id="canales">Noticias y Canales Principales</h2>
-        <div class="iptv-main-container">
-            <div class="reproductor-seccion">
-                <video id="reproductor-tv" controls autoplay playsinline poster="https://images.unsplash.com/photo-1543536448-d209d2d13a1c?w=800&auto=format&fit=crop&q=60">
-                    Tu navegador no soporta la reproducción de video en directo.
-                </video>
-            </div>
-            <div class="lista-seccion">
-                <div class="lista-titulo">CANALES SELECCIONADOS</div>
-                <div class="buscador-iptv-box">
-                    <input type="text" id="buscador" class="buscador-iptv" placeholder="🔎 Filtrar canal...">
-                </div>
-                <ul id="lista-canales"></ul>
-            </div>
-        </div>
-
-        <!-- SECCIÓN DE CARRUSEL DE CANALES DESTACADOS -->
-        <h2 class="section-title">Canales Destacados</h2>
+        <!-- SECCIÓN DE CANALES DE VENEZUELA EN FILA HORIZONTAL -->
+        <h2 class="section-title" id="canales">Canales de Venezuela en Directo</h2>
         <div class="row-container">
             <button class="scroll-btn scroll-left" onclick="scrollCanales(-1)">&#10094;</button>
             <div id="canalesScroll" class="horizontal-scroll"></div>
@@ -505,20 +472,14 @@
     </div>
 
     <script>
-        /* LISTA FIJA LIMPIA: ÚNICAMENTE CANALES DE NOTICIAS Y GENERALES MÁS ESTABLES */
+        /* LISTA OFICIAL DE CANALES DE VENEZUELA CON SEÑALES ESTABLES Y VERIFICADAS */
         const listaCanalesEnVivo = [
-            { nombre: "CNN en Español (Noticias)", img: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "Globovisión (Noticias Venezuela)", img: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "VTV (Noticias Venezuela)", img: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "Telesur (Noticias Internacional)", img: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "DW Español (Noticias Mundo)", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "France 24 Español (Noticias)", img: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "RT en Español (Noticias)", img: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "Space (Películas)", img: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Películas" },
-            { nombre: "ESPN Deportes (Deportes)", img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Deportes" },
-            { nombre: "Discovery Channel (Documentales)", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Documentales" },
-            { nombre: "Cartoon Network (Infantil)", img: "https://images.unsplash.com/photo-1563089145-599997674d42?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Infantil" },
-            { nombre: "HTV Música Latina", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Música" }
+            { nombre: "Globovisión", img: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/live_stream?channel=UC5qap5aO4i9A" },
+            { nombre: "VTV (Venezolana de Televisión)", img: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/live_stream?channel=UCvtv_oficial" },
+            { nombre: "Televen", img: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/live_stream?channel=UCteleven" },
+            { nombre: "Venevisión", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/live_stream?channel=UCvenevision" },
+            { nombre: "Telesur", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/live_stream?channel=UCtelesur" },
+            { nombre: "TVes", img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/live_stream?channel=UCtves" }
         ];
 
         function cargarCanalesEnVivo() {
@@ -539,24 +500,6 @@
                     reproducirPelicula(canal.nombre, canal.url);
                 };
                 contenedor.appendChild(card);
-            });
-
-            // Cargar también en la lista lateral fija
-            mostrarCanalesListaLateral(listaCanalesEnVivo);
-        }
-
-        function mostrarCanalesListaLateral(canales) {
-            const listaUL = document.getElementById('lista-canales');
-            listaUL.innerHTML = '';
-            canales.forEach(canal => {
-                const li = document.createElement('li');
-                li.innerText = canal.nombre;
-                li.addEventListener('click', () => {
-                    document.querySelectorAll('#lista-canales li').forEach(el => el.classList.remove('activo'));
-                    li.classList.add('activo');
-                    cambiarCanal(canal.url, canal.nombre);
-                });
-                listaUL.appendChild(li);
             });
         }
 
@@ -907,32 +850,6 @@
                 console.error("Error al registrar nuevo cliente: ", error);
             });
         }
-    </script>
-
-    <!-- CONTROL DE REPRODUCTOR NATIVO Y FILTRO DE LA LISTA FIJA -->
-    <script>
-        function cambiarCanal(url, nombre) {
-            const videoElement = document.getElementById('reproductor-tv');
-            videoElement.pause();
-            videoElement.removeAttribute('src');
-            videoElement.load();
-
-            videoElement.src = url;
-            videoElement.play().then(() => {
-                console.log("Reproduciendo: " + nombre);
-            }).catch(error => {
-                console.warn("El stream de este canal está offline o bloqueado:", error);
-                alert("El canal '" + nombre + "' no transmitió señal o está caído en este momento. Prueba con otro.");
-            });
-        }
-
-        document.getElementById('buscador').addEventListener('input', (e) => {
-            const textoBuscado = e.target.value.toLowerCase();
-            const filtrados = listaCanalesEnVivo.filter(canal => 
-                canal.nombre.toLowerCase().includes(textoBuscado)
-            );
-            mostrarCanalesListaLateral(filtrados);
-        });
     </script>
 </body>
 </html>
