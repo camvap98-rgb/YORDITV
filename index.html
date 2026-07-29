@@ -902,9 +902,18 @@
         }
     </script>
 
-    <!-- MOTOR ÚNICO Y LIMPIO PARA IPTV (VIDEO.JS) -->
+    <!-- MOTOR IPTV BLINDADO CONTRA BUCLES DE PROCESAMIENTO -->
     <script>
-        const player = videojs('reproductor-tv');
+        const player = videojs('reproductor-tv', {
+            fluid: true,
+            responsive: true,
+            html5: {
+                vhs: {
+                    overrideNative: true
+                }
+            }
+        });
+
         let todosLosCanales = [];
         const urlIPTV = 'https://iptv-org.github.io/iptv/index.m3u';
 
@@ -914,7 +923,7 @@
                 const textoM3U = await respuesta.text();
                 procesarM3U(textoM3U);
             } catch (error) {
-                document.getElementById('cargando').innerText = "Error al cargar los canales. Reintenta más tarde.";
+                document.getElementById('cargando').innerText = "Error de conexión con la lista IPTV.";
                 console.error(error);
             }
         }
@@ -930,8 +939,11 @@
                     let nombre = partes[partes.length - 1] || "Canal sin nombre";
                     canalActual = { nombre: nombre };
                 } else if (linea.startsWith('http') && canalActual) {
-                    canalActual.url = linea;
-                    todosLosCanales.push(canalActual);
+                    // Filtramos enlaces problemáticos para evitar el error de procesamiento
+                    if (!linea.includes('.ts') || linea.includes('m3u8')) {
+                        canalActual.url = linea;
+                        todosLosCanales.push(canalActual);
+                    }
                     canalActual = null;
                 }
             }
@@ -943,7 +955,12 @@
         function mostrarCanales(canales) {
             const listaUL = document.getElementById('lista-canales');
             listaUL.innerHTML = '';
-            const canalesA_Mostrar = canales.slice(0, 800);
+            const canalesA_Mostrar = canales.slice(0, 500);
+
+            if(canalesA_Mostrar.length === 0) {
+                listaUL.innerHTML = '<li style="color:#ff4d4d; text-align:center;">No se encontraron canales</li>';
+                return;
+            }
 
             canalesA_Mostrar.forEach(canal => {
                 const li = document.createElement('li');
@@ -958,13 +975,17 @@
         }
 
         function cambiarCanal(url) {
-            player.src({
-                src: url,
-                type: 'application/x-mpegURL'
-            });
-            player.play().catch(error => {
-                alert("Este canal está caído temporalmente en la fuente original.");
-            });
+            try {
+                player.src({
+                    src: url,
+                    type: 'application/x-mpegURL'
+                });
+                player.play().catch(error => {
+                    console.warn("Stream no disponible temporalmente:", error);
+                });
+            } catch (e) {
+                alert("Este canal tiene protección o está offline en este momento.");
+            }
         }
 
         document.getElementById('buscador').addEventListener('input', (e) => {
