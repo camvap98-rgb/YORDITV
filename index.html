@@ -7,14 +7,116 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #080808; color: #ffffff; margin-top: 80px; }
+        body { background-color: #080808; color: #ffffff; }
+
+        /* PANTALLA DE LOGIN */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: #121212;
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid #B8860B;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 30px rgba(184, 134, 11, 0.4);
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .login-input:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        .login-error {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* PLATAFORMA PRINCIPAL (OCULTA HASTA LOGuear) */
+        #mainPlatform {
+            display: none;
+            margin-top: 80px;
+        }
+
         header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: rgba(8, 8, 8, 0.95); position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 2px solid #B8860B; box-shadow: 0 4px 10px rgba(184, 134, 11, 0.2); flex-wrap: wrap; gap: 15px; }
         .logo { font-size: 28px; font-weight: bold; background: linear-gradient(45deg, #FFD700, #FFA500, #FFF8DC, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255, 215, 0, 0.7); letter-spacing: 2px; text-transform: uppercase; }
         .search-container { flex-grow: 1; max-width: 400px; margin: 0 20px; }
         .search-bar { width: 100%; padding: 10px 15px; background-color: #1a1a1a; border: 1px solid #333; border-radius: 25px; color: #fff; font-size: 14px; outline: none; transition: 0.3s; }
         .search-bar:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
         nav a { color: #d1d1d1; text-decoration: none; margin-left: 15px; font-size: 16px; transition: 0.3s; font-weight: 500; }
         nav a:hover { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
+        
+        .logout-btn {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .logout-btn:hover { background: #ff2a2a; }
+
         .hero { min-height: 50vh; background-color: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 5%; margin-bottom: 20px; position: relative; overflow: hidden; border-bottom: 2px solid #333; text-align: center; }
         .estreno-tag { position: absolute; top: 15px; left: 15px; background: #FFD700; color: #000; padding: 6px 12px; font-weight: bold; border-radius: 5px; font-size: 12px; letter-spacing: 1px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); z-index: 10; }
         .hero h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); color: #FFD700; margin-bottom: 15px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
@@ -43,67 +145,112 @@
 </head>
 <body>
 
-    <header>
-        <div class="logo">YORDITV</div>
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series, comiquitas..." onkeyup="filtrarContenido()">
-        </div>
-        <nav>
-            <a href="#accion">Acción</a>
-            <a href="#comedia">Comedia</a>
-            <a href="#terror">Terror</a>
-            <a href="#series">Series</a>
-            <a href="#comiquitas">Comiquitas</a>
-        </nav>
-    </header>
-
-    <div class="hero">
-        <span class="estreno-tag">🔥 GRAN ESTRENO EXCLUSIVO</span>
-        <h2>Tráiler Oficial</h2>
-        <div class="hero-trailer-container">
-            <iframe src="https://www.youtube.com/embed/pqLSLoDkZWE?autoplay=1&mute=1&loop=1&playlist=pqLSLoDkZWE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <!-- PANTALLA DE INICIO DE SESIÓN -->
+    <div id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">YORDITV</div>
+            <input type="email" id="loginEmail" class="login-input" placeholder="Correo electrónico">
+            <input type="password" id="loginPassword" class="login-input" placeholder="Contraseña">
+            <button class="login-btn" onclick="iniciarSesion()">Entrar a YORDITV</button>
+            <div id="loginError" class="login-error">Correo o contraseña incorrectos.</div>
         </div>
     </div>
 
-    <!-- SECCIÓN ACCIÓN -->
-    <h2 class="section-title" id="accion">Películas de Acción</h2>
-    <div class="grid-container">
-        <!-- VACÍO: Agrega tus películas aquí -->
-    </div>
+    <!-- PLATAFORMA PRINCIPAL -->
+    <div id="mainPlatform">
+        <header>
+            <div class="logo">YORDITV</div>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series, comiquitas..." onkeyup="filtrarContenido()">
+            </div>
+            <div class="nav-right">
+                <nav>
+                    <a href="#accion">Acción</a>
+                    <a href="#comedia">Comedia</a>
+                    <a href="#terror">Terror</a>
+                    <a href="#series">Series</a>
+                    <a href="#comiquitas">Comiquitas</a>
+                </nav>
+                <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
+            </div>
+        </header>
 
-    <!-- SECCIÓN COMEDIA -->
-    <h2 class="section-title" id="comedia">Películas de Comedia</h2>
-    <div class="grid-container">
-        <!-- VACÍO: Agrega tus películas aquí -->
-    </div>
+        <div class="hero">
+            <span class="estreno-tag">🔥 GRAN ESTRENO EXCLUSIVO</span>
+            <h2>Tráiler Oficial</h2>
+            <div class="hero-trailer-container">
+                <iframe src="https://www.youtube.com/embed/pqLSLoDkZWE?autoplay=1&mute=1&loop=1&playlist=pqLSLoDkZWE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
 
-    <!-- SECCIÓN TERROR -->
-    <h2 class="section-title" id="terror">Películas de Terror</h2>
-    <div class="grid-container">
-        <!-- VACÍO: Agrega tus películas aquí -->
-    </div>
+        <h2 class="section-title" id="accion">Películas de Acción</h2>
+        <div class="grid-container"></div>
 
-    <!-- SECCIÓN SERIES -->
-    <h2 class="section-title" id="series">Series</h2>
-    <div class="grid-container">
-        <!-- VACÍO: Agrega tus series aquí -->
-    </div>
+        <h2 class="section-title" id="comedia">Películas de Comedia</h2>
+        <div class="grid-container"></div>
 
-    <!-- SECCIÓN COMIQUITAS -->
-    <h2 class="section-title" id="comiquitas">Comiquitas</h2>
-    <div class="grid-container">
-        <!-- VACÍO: Agrega tus comiquitas aquí -->
-    </div>
+        <h2 class="section-title" id="terror">Películas de Terror</h2>
+        <div class="grid-container"></div>
 
-    <div id="playerModal" class="player-modal">
-        <div class="player-container">
-            <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar película">✕</span>
-            <div id="videoBox" class="video-box"></div>
-            <div id="movieTitle" class="movie-info-title">Cargando...</div>
+        <h2 class="section-title" id="series">Series</h2>
+        <div class="grid-container"></div>
+
+        <h2 class="section-title" id="comiquitas">Comiquitas</h2>
+        <div class="grid-container"></div>
+
+        <div id="playerModal" class="player-modal">
+            <div class="player-container">
+                <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar película">✕</span>
+                <div id="videoBox" class="video-box"></div>
+                <div id="movieTitle" class="movie-info-title">Cargando...</div>
+            </div>
         </div>
     </div>
 
     <script>
+        // BASE DE DATOS DE CUENTAS AUTORIZADAS
+        const cuentasValidas = {
+            "administracion@yorditv.com": "14082024.",
+            "familia1@yorditv.com": "Familia1",
+            "familia2@yorditv.com": "Familia2",
+            "familia3@yorditv.com": "Familia3",
+            "familia4@yorditv.com": "Familia4",
+            "familia5@yorditv.com": "Familia5",
+            "familia6@yorditv.com": "Familia6"
+        };
+
+        function iniciarSesion() {
+            var email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            var pass = document.getElementById('loginPassword').value.trim();
+            var errorDiv = document.getElementById('loginError');
+
+            if (cuentasValidas[email] && cuentasValidas[email] === pass) {
+                // Guardar en la memoria del navegador que ya inició sesión
+                localStorage.setItem("yorditv_sesion", email);
+                
+                // Guardar registro del inicio de sesión en la nube de Firebase de forma automática
+                registrarAccesoEnNube(email);
+
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainPlatform').style.display = 'block';
+            } else {
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem("yorditv_sesion");
+            location.reload();
+        }
+
+        // Revisar si ya había iniciado sesión antes
+        window.onload = function() {
+            if (localStorage.getItem("yorditv_sesion")) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainPlatform').style.display = 'block';
+            }
+        };
+
         function reproducirPelicula(titulo, urlVideo) {
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
@@ -140,6 +287,31 @@
                 cerrarReproductor();
             }
         });
+    </script>
+
+    <!-- SDKs de Firebase para guardar los registros de acceso en la nube -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDNPNMaB5b6NGD3TLa7uTRxz8S6E6O6iI",
+            authDomain: "yorditv-6575c.firebaseapp.com",
+            projectId: "yorditv-6575c",
+            storageBucket: "yorditv-6575c.firebasestorage.app",
+            messagingSenderId: "85744391218",
+            appId: "1:85744391218:web:generated"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function registrarAccesoEnNube(correoUsuario) {
+            db.collection("usuarios_registrados").add({
+                correo: correoUsuario,
+                fechaIngreso: new Date().toLocaleString()
+            }).catch(function(error) {
+                console.error("Error al registrar en la nube: ", error);
+            });
+        }
     </script>
 </body>
 </html>
