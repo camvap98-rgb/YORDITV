@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YORDITV - Tu Plataforma Privada</title>
-    
-    <!-- SDKs de Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -69,21 +65,39 @@
         </div>
     </div>
 
-    <!-- SECCIONES QUE SE LLENARÁN SOLAS DESDE FIREBASE -->
+    <!-- SECCIÓN ACCIÓN -->
     <h2 class="section-title" id="accion">Películas de Acción</h2>
-    <div class="grid-container" id="grid-accion"></div>
+    <div class="grid-container">
+        <!-- AQUÍ AGREGAS TUS PELÍCULAS DE ACCIÓN -->
+        <div class="card" tabindex="0" onclick="reproducirPelicula('Falcon Rising', 'https://www.youtube.com/embed/Dt0s95_C1MQ?autoplay=1')">
+            <div class="card-content"><img src="https://img.youtube.com/vi/Dt0s95_C1MQ/hqdefault.jpg" alt="Falcon Rising"></div>
+            <div class="card-title">Falcon Rising</div>
+        </div>
+    </div>
 
+    <!-- SECCIÓN COMEDIA -->
     <h2 class="section-title" id="comedia">Películas de Comedia</h2>
-    <div class="grid-container" id="grid-comedia"></div>
+    <div class="grid-container">
+        <!-- AQUÍ AGREGAS TUS PELÍCULAS DE COMEDIA -->
+    </div>
 
+    <!-- SECCIÓN TERROR -->
     <h2 class="section-title" id="terror">Películas de Terror</h2>
-    <div class="grid-container" id="grid-terror"></div>
+    <div class="grid-container">
+        <!-- AQUÍ AGREGAS TUS PELÍCULAS DE TERROR -->
+    </div>
 
+    <!-- SECCIÓN SERIES -->
     <h2 class="section-title" id="series">Series</h2>
-    <div class="grid-container" id="grid-series"></div>
+    <div class="grid-container">
+        <!-- AQUÍ AGREGAS TUS SERIES -->
+    </div>
 
+    <!-- SECCIÓN COMIQUITAS -->
     <h2 class="section-title" id="comiquitas">Comiquitas</h2>
-    <div class="grid-container" id="grid-comiquitas"></div>
+    <div class="grid-container">
+        <!-- AQUÍ AGREGAS TUS COMIQUITAS -->
+    </div>
 
     <div id="playerModal" class="player-modal">
         <div class="player-container">
@@ -94,59 +108,6 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCDNPNMaB5b6NGD3TLa7uTRxz8S6E6O6iI",
-            authDomain: "yorditv-6575c.firebaseapp.com",
-            projectId: "yorditv-6575c",
-            storageBucket: "yorditv-6575c.firebasestorage.app",
-            messagingSenderId: "85744391218",
-            appId: "1:85744391218:web:generated"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // CARGAR AUTOMÁTICAMENTE DESDE FIREBASE
-        function cargarContenidoDesdeFirebase() {
-            db.collection("peliculas").get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    let pelicula = doc.data();
-                    let titulo = pelicula.titulo || "Sin título";
-                    let categoria = pelicula.categoria ? pelicula.categoria.toLowerCase().trim() : "accion";
-                    let urlVideo = pelicula.urlVideo || "";
-
-                    let videoId = "";
-                    if(urlVideo.includes("embed/")) {
-                        videoId = urlVideo.split("embed/")[1].split("?")[0];
-                    }
-                    let imagenUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-
-                    let contenedor = document.getElementById(`grid-${categoria}`);
-                    
-                    if (contenedor) {
-                        let card = document.createElement("div");
-                        card.className = "card";
-                        card.setAttribute("tabindex", "0");
-                        card.onclick = function() { reproducirPelicula(titulo, urlVideo); };
-
-                        card.innerHTML = `
-                            <div class="card-content">
-                                <img src="${imagenUrl}" alt="${titulo}">
-                            </div>
-                            <div class="card-title">${titulo}</div>
-                        `;
-                        contenedor.appendChild(card);
-                    }
-                });
-            }).catch((error) => {
-                console.error("Error al cargar de Firebase: ", error);
-            });
-        }
-
-        window.onload = function() {
-            cargarContenidoDesdeFirebase();
-        };
-
         function reproducirPelicula(titulo, urlVideo) {
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
