@@ -902,7 +902,7 @@
         }
     </script>
 
-    <!-- MOTOR IPTV BLINDADO CONTRA BUCLES DE PROCESAMIENTO -->
+    <!-- MOTOR IPTV BLINDADO CON ENLACE M3U OFICIAL -->
     <script>
         const player = videojs('reproductor-tv', {
             fluid: true,
@@ -915,6 +915,7 @@
         });
 
         let todosLosCanales = [];
+        // Enlace M3U oficial corregido para evitar la tabla CSV
         const urlIPTV = 'https://iptv-org.github.io/iptv/index.m3u';
 
         async function cargarCanales() {
