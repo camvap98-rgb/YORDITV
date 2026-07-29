@@ -1,25 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <<!-- Reproductores de video profesionales para IPTV -->
+    <!-- Reproductores de video profesionales para IPTV -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>>
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YORDITV - Tu Plataforma Privada</title>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body<!-- SECCIÓN DEL REPRODUCTOR DE YORDITV -->
-    <div class="reproductor-seccion"><!-- SECCIÓN DE LA LISTA DE CANALES -->
-    <div class="lista-seccion">
-        <div class="lista-titulo">CANALES DISPONIBLES</div>
-        <div id="cargando">Descargando canales del mundo... por favor espera.</div>
-        <ul id="lista-canales"></ul>
-    </div>
-        <video id="reproductor-tv" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
-            <p class="vjs-no-js">Para ver este video, por favor activa JavaScript o usa un navegador compatible.</p>
-        </video>
-    </div> { background-color: #080808; color: #ffffff; }
+        body { background-color: #080808; color: #ffffff; }
 
         /* PANTALLAS DE ACCESO (LOGIN Y REGISTRO) */
         .auth-screen {
@@ -238,6 +228,21 @@
         
         .section-title { font-size: clamp(20px, 3vw, 28px); margin: 30px 5% 15px 5%; color: #FFD700; border-left: 5px solid #FFD700; padding-left: 15px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
         
+        /* ESTILOS PARA LA SECCIÓN IPTV INTEGRADA */
+        .iptv-main-container { padding: 0 5%; margin-bottom: 40px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .iptv-main-container { grid-template-columns: 1fr; } }
+        .reproductor-seccion { width: 100%; background: #000; border: 2px solid #FFD700; border-radius: 12px; overflow: hidden; box-shadow: 0 0 25px rgba(255,215,0,0.3); }
+        .video-js { width: 100%; aspect-ratio: 16 / 9; }
+        .lista-seccion { background: #121212; border: 1px solid #333; border-radius: 12px; padding: 15px; max-height: 450px; display: flex; flex-direction: column; }
+        .lista-titulo { font-size: 16px; font-weight: bold; color: #FFD700; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 8px; }
+        #cargando { font-size: 13px; color: #aaa; text-align: center; padding: 10px; }
+        #lista-canales { list-style: none; overflow-y: auto; flex-grow: 1; }
+        #lista-canales li { padding: 10px; border-bottom: 1px solid #222; font-size: 14px; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #lista-canales li:hover, #lista-canales li.activo { background: #FFD700; color: #000; font-weight: bold; border-radius: 6px; }
+        .buscador-iptv-box { margin-bottom: 10px; }
+        .buscador-iptv { width: 100%; padding: 8px 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: #fff; font-size: 13px; outline: none; }
+        .buscador-iptv:focus { border-color: #FFD700; }
+
         /* CONTENEDOR DE FILA HORIZONTAL CON FLECHAS PARA CANALES */
         .row-container { position: relative; display: flex; align-items: center; padding: 0 5%; margin-bottom: 30px; }
         .horizontal-scroll {
@@ -247,9 +252,9 @@
             scroll-behavior: smooth;
             width: 100%;
             padding: 10px 5px;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
-        .horizontal-scroll::-webkit-scrollbar { display: none; /* Chrome, Safari */ }
+        .horizontal-scroll::-webkit-scrollbar { display: none; }
 
         .scroll-btn {
             position: absolute;
@@ -415,8 +420,26 @@
             </div>
         </div>
 
-        <!-- SECCIÓN DE CANALES EN VIVO (UNA SOLA LÍNEA CON FLECHAS DE DESPLAZAMIENTO) -->
-        <h2 class="section-title" id="canales">Canales en Vivo (Nacionales e Internacionales)</h2>
+        <!-- SECCIÓN DE CANALES IPTV EN VIVO CON REPRODUCTOR Y LISTA LATERAL -->
+        <h2 class="section-title" id="canales">Televisión Global y Canales en Vivo</h2>
+        <div class="iptv-main-container">
+            <div class="reproductor-seccion">
+                <video id="reproductor-tv" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
+                    <p class="vjs-no-js">Para ver este video, por favor activa JavaScript o usa un navegador compatible.</p>
+                </video>
+            </div>
+            <div class="lista-seccion">
+                <div class="lista-titulo">CANALES DISPONIBLES</div>
+                <div class="buscador-iptv-box">
+                    <input type="text" id="buscador" class="buscador-iptv" placeholder="🔎 Buscar canal...">
+                </div>
+                <div id="cargando">Descargando canales del mundo... por favor espera.</div>
+                <ul id="lista-canales"></ul>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE CARRUSEL DE CANALES DESTACADOS -->
+        <h2 class="section-title">Canales Destacados</h2>
         <div class="row-container">
             <button class="scroll-btn scroll-left" onclick="scrollCanales(-1)">&#10094;</button>
             <div id="canalesScroll" class="horizontal-scroll">
@@ -461,9 +484,7 @@
                 <span>👥 Total cuentas: <span id="totalAccountsCount">0</span></span>
             </div>
             <input type="text" id="adminSearchInput" class="auth-input" placeholder="Buscar por correo de usuario..." onkeyup="filtrarCuentasAdmin()" style="margin-bottom: 15px;">
-            <div id="accountListContainer" class="account-list">
-                <!-- Se llenará dinámicamente -->
-            </div>
+            <div id="accountListContainer" class="account-list"></div>
         </div>
     </div>
 
@@ -489,7 +510,6 @@
     </div>
 
     <script>
-        // LISTA AMPLIADA Y OPTIMIZADA DE CANALES EN VIVO (CON TRANSMISIONES ESTABLES / TAPA DE LOGOS Y ENLACES DIRECTOS)
         const listaCanalesEnVivo = [
             { nombre: "Space", img: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Películas" },
             { nombre: "Dpelículas", img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Películas" },
@@ -538,7 +558,6 @@
             contenedor.scrollBy({ left: direccion * 320, behavior: 'smooth' });
         }
 
-        // BASE DE DATOS DE CUENTAS
         function obtenerBaseCuentas() {
             let guardadas = localStorage.getItem("yorditv_db_cuentas");
             if (guardadas) {
@@ -575,7 +594,6 @@
             if (!correo) return;
             var nuevaClave = prompt("Ingrese la nueva clave que desea colocar:");
             if (!nuevaClave) return;
-
             correo = correo.trim().toLowerCase();
             var mensaje = "Hola YordiTV olvide mi contraseña y quisiera que me ayudaras a restablecerla. Mi correo es: " + correo + " y mi nueva clave es: " + nuevaClave;
             var urlWhatsapp = "https://wa.me/584249749786?text=" + encodeURIComponent(mensaje);
@@ -592,7 +610,6 @@
             var email = document.getElementById('loginEmail').value.trim().toLowerCase();
             var pass = document.getElementById('loginPassword').value.trim();
             var errorDiv = document.getElementById('loginError');
-
             let dbCuentas = obtenerBaseCuentas();
 
             if (dbCuentas[email] && dbCuentas[email].pass === pass) {
@@ -601,7 +618,6 @@
                     errorDiv.style.display = 'block';
                     return;
                 }
-
                 if (email !== "administracion@yorditv.com" && !email.startsWith("familia") && dbCuentas[email].dias <= 0) {
                     localStorage.setItem("yorditv_sesion_activa", "true");
                     localStorage.setItem("yorditv_usuario_actual", email);
@@ -609,7 +625,6 @@
                     document.getElementById('expiredScreen').style.display = 'flex';
                     return;
                 }
-
                 localStorage.setItem("yorditv_sesion_activa", "true");
                 localStorage.setItem("yorditv_usuario_actual", email);
                 
@@ -649,9 +664,7 @@
                 codigo: codigo || "Ninguno"
             };
             localStorage.setItem("yorditv_db_cuentas", JSON.stringify(dbCuentas));
-
             registrarRegistroEnNube(email, pass, edad, codigo);
-            
             alert("¡Registro exitoso! Ya puedes iniciar sesión.");
             mostrarLogin();
         }
@@ -660,7 +673,6 @@
             localStorage.removeItem("yorditv_sesion_activa");
             localStorage.removeItem("yorditv_usuario_actual");
             localStorage.removeItem("yorditv_exenta");
-            // Limpiamos los inputs de login por seguridad para que no queden guardados en memoria al salir
             document.getElementById('loginEmail').value = "";
             document.getElementById('loginPassword').value = "";
             document.getElementById('mainPlatform').style.display = 'none';
@@ -689,7 +701,6 @@
             document.getElementById('expiredScreen').style.display = 'none';
             document.getElementById('mainPlatform').style.display = 'block';
 
-            // Cargar los canales en vivo en carrusel horizontal
             cargarCanalesEnVivo();
 
             if (usuarioActual === "administracion@yorditv.com") {
@@ -697,7 +708,6 @@
             }
 
             var esExenta = localStorage.getItem("yorditv_exenta") === "true";
-            
             if (!esExenta) {
                 document.getElementById('timerContainer').style.display = 'flex';
                 actualizarRelojDias();
@@ -719,7 +729,6 @@
             }
         }
 
-        // FUNCIONES DE CONTROL DE PANEL DE ADMINISTRADOR
         function abrirPanelAdmin() {
             document.getElementById('adminModal').style.display = 'flex';
             actualizarListaCuentasAdmin();
@@ -734,12 +743,10 @@
             let dbCuentas = obtenerBaseCuentas();
             let container = document.getElementById('accountListContainer');
             container.innerHTML = "";
-
             let total = 0;
             for (let correo in dbCuentas) {
                 total++;
                 if (filtro && !correo.includes(filtro)) continue;
-
                 let datos = dbCuentas[correo];
                 let div = document.createElement('div');
                 div.className = 'account-item';
@@ -769,7 +776,6 @@
             let btnToggle = document.getElementById('btnToggleStatus');
             btnToggle.innerText = datos.activo ? "🔒 Desactivar Cuenta" : "🔓 Activar Cuenta";
             btnToggle.style.background = datos.activo ? "#ffaa00" : "#4cd137";
-
             document.getElementById('accountDetailModal').style.display = 'flex';
         }
 
@@ -780,7 +786,6 @@
         function adminCambiarClave() {
             let nuevaClave = prompt("Ingrese la nueva clave para " + cuentaSeleccionadaActual + ":");
             if (!nuevaClave) return;
-
             let dbCuentas = obtenerBaseCuentas();
             if (dbCuentas[cuentaSeleccionadaActual]) {
                 dbCuentas[cuentaSeleccionadaActual].pass = nuevaClave;
@@ -813,7 +818,6 @@
         }
 
         window.onload = function() {
-            // Verificación estricta: sólo carga si la sesión está explícitamente activa y el usuario existe en DB
             if (localStorage.getItem("yorditv_sesion_activa") === "true" && localStorage.getItem("yorditv_usuario_actual")) {
                 cargarPlataforma();
             } else {
@@ -825,7 +829,6 @@
             var modal = document.getElementById('playerModal');
             var videoBox = document.getElementById('videoBox');
             var movieTitle = document.getElementById('movieTitle');
-
             movieTitle.innerText = titulo;
             videoBox.innerHTML = '<iframe src="' + urlVideo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>';
             modal.style.display = 'flex';
@@ -840,8 +843,7 @@
 
         function filtrarContenido() {
             var input = document.getElementById('searchInput').value.toLowerCase();
-            var cards = document.querySelectorAll('.card');
-
+            var cards = document.querySelectorAll('.grid-container .card');
             cards.forEach(function(card) {
                 var title = card.querySelector('.card-title').innerText.toLowerCase();
                 if (title.includes(input)) {
@@ -898,174 +900,82 @@
                 console.error("Error al registrar nuevo cliente: ", error);
             });
         }
-    </script><script>
-    // Inicializa el reproductor de video
-    const player = videojs('reproductor-tv');
-    let todosLosCanales = [];
+    </script>
 
-    // ENLACE REAL DE LA LISTA IPTV-ORG
-    const urlIPTV = 'https://iptv-org.github.io/iptv/index.m3u';
+    <!-- MOTOR ÚNICO Y LIMPIO PARA IPTV (VIDEO.JS) -->
+    <script>
+        const player = videojs('reproductor-tv');
+        let todosLosCanales = [];
+        const urlIPTV = 'https://iptv-org.github.io/iptv/index.m3u';
 
-    // Función para descargar e interpretar la lista M3U
-    async function cargarCanales() {
-        try {
-            const respuesta = await fetch(urlIPTV);
-            const textoM3U = await respuesta.text();
-            procesarM3U(textoM3U);
-        } catch (error) {
-            document.getElementById('cargando').innerText = "Error al cargar los canales. Reintenta más tarde.";
-            console.error(error);
-        }
-    }
-
-    // Convierte el texto plano del archivo M3U en una lista organizada
-    function procesarM3U(texto) {
-        const lineas = texto.split('\n');
-        let canalActual = null;
-
-        for (let i = 0; i < lineas.length; i++) {
-            let linea = lineas[i].trim();
-
-            if (linea.startsWith('#EXTINF:')) {
-                let partes = linea.split(',');
-                let nombre = partes[partes.length - 1] || "Canal sin nombre";
-                canalActual = { nombre: nombre };
-            } else if (linea.startsWith('http') && canalActual) {
-                canalActual.url = linea;
-                todosLosCanales.push(canalActual);
-                canalActual = null;
+        async function cargarCanales() {
+            try {
+                const respuesta = await fetch(urlIPTV);
+                const textoM3U = await respuesta.text();
+                procesarM3U(textoM3U);
+            } catch (error) {
+                document.getElementById('cargando').innerText = "Error al cargar los canales. Reintenta más tarde.";
+                console.error(error);
             }
         }
 
-        document.getElementById('cargando').style.display = 'none';
-        mostrarCanales(todosLosCanales);
-    }
+        function procesarM3U(texto) {
+            const lineas = texto.split('\n');
+            let canalActual = null;
 
-    // Dibuja los canales en la lista de la pantalla
-    function mostrarCanales(canales) {
-        const listaUL = document.getElementById('lista-canales');
-        listaUL.innerHTML = '';
-
-        const canalesA_Mostrar = canales.slice(0, 800);
-
-        canalesA_Mostrar.forEach(canal => {
-            const li = document.createElement('li');
-            li.innerText = canal.nombre;
-            li.addEventListener('click', () => {
-                document.querySelectorAll('#lista-canales li').forEach(el => el.classList.remove('activo'));
-                li.classList.add('activo');
-                cambiarCanal(canal.url);
-            });
-            listaUL.appendChild(li);
-        });
-    }
-
-    // Cambia la fuente de video y reproduce el nuevo canal
-    function cambiarCanal(url) {
-        player.src({
-            src: url,
-            type: 'application/x-mpegURL'
-        });
-        player.play().catch(error => {
-            alert("Este canal está caído temporalmente en la fuente original.");
-        });
-    }
-
-    // Filtro del Buscador
-    document.getElementById('buscador').addEventListener('input', (e) => {
-        const textoBuscado = e.target.value.toLowerCase();
-        const filtrados = todosLosCanales.filter(canal => 
-            canal.nombre.toLowerCase().includes(textoBuscado)
-        );
-        mostrarCanales(filtrados);
-    });
-
-    // Inicia la carga automática
-    cargarCanales();
-</script>
-</body><script>
-    // Inicializa el reproductor de video
-    const player = videojs('reproductor-tv');
-    let todosLosCanales = [];
-
-    // ENLACE REAL DE LA LISTA IPTV-ORG
-    const urlIPTV = 'https://iptv-org.github.io/iptv/index.m3u';
-
-    // Función para descargar e interpretar la lista M3U
-    async function cargarCanales() {
-        try {
-            const respuesta = await fetch(urlIPTV);
-            const textoM3U = await respuesta.text();
-            procesarM3U(textoM3U);
-        } catch (error) {
-            document.getElementById('cargando').innerText = "Error al cargar los canales. Reintenta más tarde.";
-            console.error(error);
-        }
-    }
-
-    // Convierte el texto plano del archivo M3U en una lista organizada
-    function procesarM3U(texto) {
-        const lineas = texto.split('\n');
-        let canalActual = null;
-
-        for (let i = 0; i < lineas.length; i++) {
-            let linea = lineas[i].trim();
-
-            if (linea.startsWith('#EXTINF:')) {
-                let partes = linea.split(',');
-                let nombre = partes[partes.length - 1] || "Canal sin nombre";
-                canalActual = { nombre: nombre };
-            } else if (linea.startsWith('http') && canalActual) {
-                canalActual.url = linea;
-                todosLosCanales.push(canalActual);
-                canalActual = null;
+            for (let i = 0; i < lineas.length; i++) {
+                let linea = lineas[i].trim();
+                if (linea.startsWith('#EXTINF:')) {
+                    let partes = linea.split(',');
+                    let nombre = partes[partes.length - 1] || "Canal sin nombre";
+                    canalActual = { nombre: nombre };
+                } else if (linea.startsWith('http') && canalActual) {
+                    canalActual.url = linea;
+                    todosLosCanales.push(canalActual);
+                    canalActual = null;
+                }
             }
+
+            document.getElementById('cargando').style.display = 'none';
+            mostrarCanales(todosLosCanales);
         }
 
-        document.getElementById('cargando').style.display = 'none';
-        mostrarCanales(todosLosCanales);
-    }
+        function mostrarCanales(canales) {
+            const listaUL = document.getElementById('lista-canales');
+            listaUL.innerHTML = '';
+            const canalesA_Mostrar = canales.slice(0, 800);
 
-    // Dibuja los canales en la lista de la pantalla
-    function mostrarCanales(canales) {
-        const listaUL = document.getElementById('lista-canales');
-        listaUL.innerHTML = '';
-
-        const canalesA_Mostrar = canales.slice(0, 800);
-
-        canalesA_Mostrar.forEach(canal => {
-            const li = document.createElement('li');
-            li.innerText = canal.nombre;
-            li.addEventListener('click', () => {
-                document.querySelectorAll('#lista-canales li').forEach(el => el.classList.remove('activo'));
-                li.classList.add('activo');
-                cambiarCanal(canal.url);
+            canalesA_Mostrar.forEach(canal => {
+                const li = document.createElement('li');
+                li.innerText = canal.nombre;
+                li.addEventListener('click', () => {
+                    document.querySelectorAll('#lista-canales li').forEach(el => el.classList.remove('activo'));
+                    li.classList.add('activo');
+                    cambiarCanal(canal.url);
+                });
+                listaUL.appendChild(li);
             });
-            listaUL.appendChild(li);
-        });
-    }
+        }
 
-    // Cambia la fuente de video y reproduce el nuevo canal
-    function cambiarCanal(url) {
-        player.src({
-            src: url,
-            type: 'application/x-mpegURL'
-        });
-        player.play().catch(error => {
-            alert("Este canal está caído temporalmente en la fuente original.");
-        });
-    }
+        function cambiarCanal(url) {
+            player.src({
+                src: url,
+                type: 'application/x-mpegURL'
+            });
+            player.play().catch(error => {
+                alert("Este canal está caído temporalmente en la fuente original.");
+            });
+        }
 
-    // Filtro del Buscador
-    document.getElementById('buscador').addEventListener('input', (e) => {
-        const textoBuscado = e.target.value.toLowerCase();
-        const filtrados = todosLosCanales.filter(canal => 
-            canal.nombre.toLowerCase().includes(textoBuscado)
-        );
-        mostrarCanales(filtrados);
-    });
+        document.getElementById('buscador').addEventListener('input', (e) => {
+            const textoBuscado = e.target.value.toLowerCase();
+            const filtrados = todosLosCanales.filter(canal => 
+                canal.nombre.toLowerCase().includes(textoBuscado)
+            );
+            mostrarCanales(filtrados);
+        });
 
-    // Inicia la carga automática
-    cargarCanales();
-</script>
+        cargarCanales();
+    </script>
+</body>
 </html>
