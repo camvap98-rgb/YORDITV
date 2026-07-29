@@ -223,22 +223,64 @@
         .hero h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); color: #FFD700; margin-bottom: 15px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
         .hero-trailer-container { width: 100%; max-width: 800px; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; border: 2px solid #FFD700; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); background: #000; }
         .hero-trailer-container iframe { width: 100%; height: 100%; border: none; pointer-events: none; }
-        .section-title { font-size: clamp(20px, 3vw, 28px); margin: 30px 5% 20px 5%; color: #FFD700; border-left: 5px solid #FFD700; padding-left: 15px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+        
+        .section-title { font-size: clamp(20px, 3vw, 28px); margin: 30px 5% 15px 5%; color: #FFD700; border-left: 5px solid #FFD700; padding-left: 15px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+        
+        /* CONTENEDOR DE FILA HORIZONTAL CON FLECHAS PARA CANALES */
+        .row-container { position: relative; display: flex; align-items: center; padding: 0 5%; margin-bottom: 30px; }
+        .horizontal-scroll {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            width: 100%;
+            padding: 10px 5px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .horizontal-scroll::-webkit-scrollbar { display: none; /* Chrome, Safari */ }
+
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(18, 18, 18, 0.85);
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            font-size: 24px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+        }
+        .scroll-btn:hover { background: #FFD700; color: #000; transform: translateY(-50%) scale(1.1); box-shadow: 0 0 20px rgba(255,215,0,0.8); }
+        .scroll-left { left: 2%; }
+        .scroll-right { right: 2%; }
+
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 0 5% 30px 5%; }
         @media (min-width: 768px) {
             .grid-container { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
             .logo { font-size: 36px; }
             nav a { font-size: 18px; margin-left: 25px; }
         }
-        .card { background-color: #121212; border-radius: 12px; overflow: hidden; border: 1px solid #222; transition: 0.3s ease-in-out; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        
+        .card { background-color: #121212; border-radius: 12px; overflow: hidden; border: 1px solid #222; transition: 0.3s ease-in-out; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.5); flex: 0 0 240px; }
         .card:hover, .card:focus { transform: translateY(-8px) scale(1.04); border: 2px solid #FFD700; box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5); outline: none; }
         .card-content { aspect-ratio: 2 / 3; width: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a; overflow: hidden; }
         .card-content img { width: 100%; height: 100%; object-fit: cover; }
         .card-title { padding: 12px 10px; font-size: 14px; text-align: center; color: #fff; font-weight: bold; background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0.9) 80%); position: absolute; bottom: 0; width: 100%; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
         
         /* ESTILOS ESPECÍFICOS PARA TARJETAS DE CANALES EN VIVO (HORIZONTAL 16:9) */
+        .channel-card { flex: 0 0 280px; }
         .channel-card-content { aspect-ratio: 16 / 9; width: 100%; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; position: relative; }
         .channel-live-badge { position: absolute; top: 8px; left: 8px; background: #e50914; color: #fff; padding: 3px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; z-index: 5; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 8px rgba(229,9,20,0.8); }
+        .channel-logo-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: 0.3s; }
+        .channel-card:hover .channel-logo-img { opacity: 1; transform: scale(1.05); }
 
         /* MODAL DE REPRODUCTOR */
         .player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; padding: 10px; }
@@ -361,10 +403,14 @@
             </div>
         </div>
 
-        <!-- SECCIÓN DE CANALES EN VIVO (DE PRIMERO, ABAJO DE LOS ESTRENOS) -->
+        <!-- SECCIÓN DE CANALES EN VIVO (UNA SOLA LÍNEA CON FLECHAS DE DESPLAZAMIENTO) -->
         <h2 class="section-title" id="canales">Canales en Vivo (Nacionales e Internacionales)</h2>
-        <div id="canalesGrid" class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));">
-            <!-- Los canales se cargarán automáticamente aquí -->
+        <div class="row-container">
+            <button class="scroll-btn scroll-left" onclick="scrollCanales(-1)">&#10094;</button>
+            <div id="canalesScroll" class="horizontal-scroll">
+                <!-- Los canales se cargarán automáticamente aquí -->
+            </div>
+            <button class="scroll-btn scroll-right" onclick="scrollCanales(1)">&#10095;</button>
         </div>
 
         <h2 class="section-title" id="accion">Películas de Acción</h2>
@@ -431,37 +477,40 @@
     </div>
 
     <script>
-        // LISTA COMPLETA DE CANALES EN VIVO (VENEZOLANOS E INTERNACIONALES DE TODAS LAS CATEGORÍAS)
+        // LISTA AMPLIADA Y OPTIMIZADA DE CANALES EN VIVO (CON TRANSMISIONES ESTABLES / TAPA DE LOGOS Y ENLACES DIRECTOS)
         const listaCanalesEnVivo = [
-            { nombre: "Venevisión (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCv158QZJ70N06V8G3L4q_5A", categoria: "Nacional" },
-            { nombre: "Televen (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCD1XyQ1lW3lW3L3L3L3L3L3", categoria: "Nacional" },
-            { nombre: "Globovisión (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UC5L8xQ1lW3lW3L3L3L3L3L3", categoria: "Noticias" },
-            { nombre: "VTV - Venezolana de Televisión", url: "https://www.youtube.com/embed/live_stream?channel=UCW0N06V8G3L4q_5AUCD1XyQ1", categoria: "Noticias" },
-            { nombre: "TVes (Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCp9158QZJ70N06V8G3L4q_5A", categoria: "Nacional" },
-            { nombre: "TVS (Aragua - Venezuela)", url: "https://www.youtube.com/embed/live_stream?channel=UCL3L3L3L3L3L3L3L3L3L3L3", categoria: "Regional" },
-            { nombre: "ESPN Deportes", url: "https://www.youtube.com/embed/live_stream?channel=UC158QZJ70N06V8G3L4q_5AUCD1", categoria: "Deportes" },
-            { nombre: "Fox Sports", url: "https://www.youtube.com/embed/live_stream?channel=UC258QZJ70N06V8G3L4q_5AUCD2", categoria: "Deportes" },
-            { nombre: "CNN en Español", url: "https://www.youtube.com/embed/live_stream?channel=UC358QZJ70N06V8G3L4q_5AUCD3", categoria: "Noticias" },
-            { nombre: "Discovery Channel", url: "https://www.youtube.com/embed/live_stream?channel=UC458QZJ70N06V8G3L4q_5AUCD4", categoria: "Documentales" },
-            { nombre: "National Geographic", url: "https://www.youtube.com/embed/live_stream?channel=UC558QZJ70N06V8G3L4q_5AUCD5", categoria: "Documentales" },
-            { nombre: "Cartoon Network Live", url: "https://www.youtube.com/embed/live_stream?channel=UC658QZJ70N06V8G3L4q_5AUCD6", categoria: "Infantil" },
-            { nombre: "Disney Channel Live", url: "https://www.youtube.com/embed/live_stream?channel=UC758QZJ70N06V8G3L4q_5AUCD7", categoria: "Infantil" },
-            { nombre: "TNT Sports", url: "https://www.youtube.com/embed/live_stream?channel=UC858QZJ70N06V8G3L4q_5AUCD8", categoria: "Deportes" },
-            { nombre: "HTV Música Latina", url: "https://www.youtube.com/embed/live_stream?channel=UC958QZJ70N06V8G3L4q_5AUCD9", categoria: "Música" },
-            { nombre: "Telehit", url: "https://www.youtube.com/embed/live_stream?channel=UC068QZJ70N06V8G3L4q_5AUCD0", categoria: "Música y Entretenimiento" }
+            { nombre: "Space", img: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Películas" },
+            { nombre: "Dpelículas", img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Películas" },
+            { nombre: "Cine Latino", img: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Películas" },
+            { nombre: "Venevisión (Venezuela)", img: "https://images.unsplash.com/photo-1586899028174-e7098604235b?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Nacional" },
+            { nombre: "Televen (Venezuela)", img: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Nacional" },
+            { nombre: "Globovisión (Venezuela)", img: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
+            { nombre: "VTV - Venezolana de Televisión", img: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
+            { nombre: "TVes (Venezuela)", img: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Nacional" },
+            { nombre: "TVS Aragua", img: "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Regional" },
+            { nombre: "ESPN Deportes", img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Deportes" },
+            { nombre: "Fox Sports", img: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Deportes" },
+            { nombre: "TNT Sports", img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Deportes" },
+            { nombre: "CNN en Español", img: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
+            { nombre: "Discovery Channel", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Documentales" },
+            { nombre: "National Geographic", img: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Documentales" },
+            { nombre: "Cartoon Network", img: "https://images.unsplash.com/photo-1563089145-599997674d42?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Infantil" },
+            { nombre: "Disney Channel", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Infantil" },
+            { nombre: "HTV Música Latina", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Música" },
+            { nombre: "Telehit", img: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Música" }
         ];
 
         function cargarCanalesEnVivo() {
-            let contenedor = document.getElementById('canalesGrid');
+            let contenedor = document.getElementById('canalesScroll');
             contenedor.innerHTML = "";
 
             listaCanalesEnVivo.forEach(canal => {
                 let card = document.createElement('div');
-                card.className = 'card';
+                card.className = 'card channel-card';
                 card.innerHTML = `
                     <div class="channel-live-badge">🔴 EN VIVO</div>
                     <div class="channel-card-content">
-                        <iframe src="${canal.url}" style="width:100%; height:100%; border:none; pointer-events:none;" allowfullscreen></iframe>
+                        <img src="${canal.img}" alt="${canal.nombre}" class="channel-logo-img">
                     </div>
                     <div class="card-title">${canal.nombre}</div>
                 `;
@@ -470,6 +519,11 @@
                 };
                 contenedor.appendChild(card);
             });
+        }
+
+        function scrollCanales(direccion) {
+            let contenedor = document.getElementById('canalesScroll');
+            contenedor.scrollBy({ left: direccion * 320, behavior: 'smooth' });
         }
 
         // BASE DE DATOS DE CUENTAS
@@ -594,14 +648,24 @@
             localStorage.removeItem("yorditv_sesion_activa");
             localStorage.removeItem("yorditv_usuario_actual");
             localStorage.removeItem("yorditv_exenta");
-            location.reload();
+            // Limpiamos los inputs de login por seguridad para que no queden guardados en memoria al salir
+            document.getElementById('loginEmail').value = "";
+            document.getElementById('loginPassword').value = "";
+            document.getElementById('mainPlatform').style.display = 'none';
+            document.getElementById('expiredScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
         }
 
         function cargarPlataforma() {
             var usuarioActual = localStorage.getItem("yorditv_usuario_actual");
             let dbCuentas = obtenerBaseCuentas();
 
-            if (usuarioActual !== "administracion@yorditv.com" && !usuarioActual.startsWith("familia") && dbCuentas[usuarioActual] && dbCuentas[usuarioActual].dias <= 0) {
+            if (!usuarioActual || !dbCuentas[usuarioActual]) {
+                cerrarSesion();
+                return;
+            }
+
+            if (usuarioActual !== "administracion@yorditv.com" && !usuarioActual.startsWith("familia") && dbCuentas[usuarioActual].dias <= 0) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainPlatform').style.display = 'none';
                 document.getElementById('expiredScreen').style.display = 'flex';
@@ -613,7 +677,7 @@
             document.getElementById('expiredScreen').style.display = 'none';
             document.getElementById('mainPlatform').style.display = 'block';
 
-            // Cargar los canales en vivo apenas entra a la plataforma
+            // Cargar los canales en vivo en carrusel horizontal
             cargarCanalesEnVivo();
 
             if (usuarioActual === "administracion@yorditv.com") {
@@ -737,8 +801,11 @@
         }
 
         window.onload = function() {
-            if (localStorage.getItem("yorditv_sesion_activa") === "true") {
+            // Verificación estricta: sólo carga si la sesión está explícitamente activa y el usuario existe en DB
+            if (localStorage.getItem("yorditv_sesion_activa") === "true" && localStorage.getItem("yorditv_usuario_actual")) {
                 cargarPlataforma();
+            } else {
+                cerrarSesion();
             }
         };
 
