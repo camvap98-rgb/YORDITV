@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YORDITV - Tu Plataforma Privada</title>
 
+    <!-- Cargamos el reproductor de video necesario para IPTV -->
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #080808; color: #ffffff; }
@@ -293,8 +297,8 @@
 
         .player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; padding: 10px; }
         .player-container { width: 95%; max-width: 960px; background: #000; border: 2px solid #FFD700; border-radius: 12px; overflow: visible; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); position: relative; }
-        .video-box { width: 100%; aspect-ratio: 16 / 9; position: relative; background: #000; border-radius: 10px 10px 0 0; overflow: hidden; }
-        .video-box iframe, .video-box video { width: 100%; height: 100%; border: none; }
+        .video-box { width: 100%; aspect-ratio: 16 / 9; position: relative; background: #000; border-radius: 10px 10px 0 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .video-box video, .video-box .video-js { width: 100% !important; height: 100% !important; }
         .close-btn { position: absolute; top: -45px; right: 0; color: #FFD700; font-size: 22px; font-weight: bold; cursor: pointer; z-index: 2100; transition: all 0.2s ease; background: #e50914; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFD700; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); }
         .close-btn:hover { color: #FFFFFF; background: #ff2a2a; transform: scale(1.15); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         .movie-info-title { padding: 12px; color: #FFD700; font-size: 18px; text-align: center; background: #111; font-weight: bold; border-radius: 0 0 10px 10px; }
@@ -409,8 +413,8 @@
             </div>
         </div>
 
-        <!-- SECCIÓN DE CANALES EN VIVO 100% FUNCIONALES Y VERIFICADOS CON EMBED DE YOUTUBE -->
-        <h2 class="section-title" id="canales">Canales en Vivo (Oficiales y Verificados)</h2>
+        <!-- SECCIÓN DE CANALES EN VIVO (IPTV) -->
+        <h2 class="section-title" id="canales">Canales en Vivo (IPTV)</h2>
         <div class="row-container">
             <button class="scroll-btn scroll-left" onclick="scrollCanales(-1)">&#10094;</button>
             <div id="canalesScroll" class="horizontal-scroll">
@@ -437,7 +441,9 @@
         <div id="playerModal" class="player-modal">
             <div class="player-container">
                 <span class="close-btn" onclick="cerrarReproductor()" title="Cerrar reproductor">✕</span>
-                <div id="videoBox" class="video-box"></div>
+                <div id="videoBox" class="video-box">
+                    <video id="reproductor" class="video-js vjs-default-skin vjs-big-play-button-centered" controls preload="auto"></video>
+                </div>
                 <div id="movieTitle" class="movie-info-title">Cargando...</div>
             </div>
         </div>
@@ -483,15 +489,12 @@
     </div>
 
     <script>
-        // BASE DE DATOS LIMPIA CON CANALES OFICIALES 100% ESTABLES USANDO EMBEDS DE YOUTUBE VERIFICADOS
+        // NUEVO CANAL IPTV INTEGRADO
         const listaCanalesEnVivo = [
-            { nombre: "Telemundo Noticias", img: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1", categoria: "Noticias" },
-            { nombre: "CNN en Español (En Vivo)", img: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/C28n8Q4x6-g?autoplay=1", categoria: "Noticias" },
-            { nombre: "El Trece en Vivo", img: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/Z0X2Jb-4X8Y?autoplay=1", categoria: "Entretenimiento" },
-            { nombre: "Telefe en Vivo", img: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/a7gZkOa_8iA?autoplay=1", categoria: "Entretenimiento" },
-            { nombre: "Red Bull TV (Deportes y Música)", img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/21X5lGlDOfg?autoplay=1", categoria: "Deportes" },
-            { nombre: "NASA TV Oficial", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60", url: "https://www.youtube.com/embed/AZu0yq6w59I?autoplay=1", categoria: "Ciencia" }
+            { nombre: "Mi Tele Privada", img: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&auto=format&fit=crop&q=60", url: "https://github.io", categoria: "IPTV" }
         ];
+
+        let videoPlayerInstance = null;
 
         function cargarCanalesEnVivo() {
             let contenedor = document.getElementById('canalesScroll');
@@ -508,7 +511,7 @@
                     <div class="card-title">${canal.nombre}</div>
                 `;
                 card.onclick = function() {
-                    reproducirPelicula(canal.nombre, canal.url);
+                    reproducirCanalIPTV(canal.nombre, canal.url);
                 };
                 contenedor.appendChild(card);
             });
@@ -797,20 +800,31 @@
             }
         };
 
-        function reproducirPelicula(titulo, urlVideo) {
+        function reproducirCanalIPTV(titulo, urlVideo) {
             var modal = document.getElementById('playerModal');
-            var videoBox = document.getElementById('videoBox');
             var movieTitle = document.getElementById('movieTitle');
 
             movieTitle.innerText = titulo;
-            videoBox.innerHTML = '<iframe src="' + urlVideo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>';
             modal.style.display = 'flex';
+
+            if (!videoPlayerInstance) {
+                videoPlayerInstance = videojs('reproductor');
+            }
+
+            videoPlayerInstance.src({
+                src: urlVideo,
+                type: 'application/x-mpegURL'
+            });
+            videoPlayerInstance.load();
+            videoPlayerInstance.play();
         }
 
         function cerrarReproductor() {
             var modal = document.getElementById('playerModal');
-            var videoBox = document.getElementById('videoBox');
-            videoBox.innerHTML = ''; 
+            if (videoPlayerInstance) {
+                videoPlayerInstance.pause();
+                videoPlayerInstance.reset();
+            }
             modal.style.display = 'none';
         }
 
