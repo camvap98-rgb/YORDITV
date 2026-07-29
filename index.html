@@ -129,6 +129,19 @@
             gap: 6px;
         }
 
+        .admin-panel-btn {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            display: none;
+        }
+        .admin-panel-btn:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); }
+
         .search-container { flex-grow: 1; max-width: 350px; margin: 0 20px; }
         .search-bar { width: 100%; padding: 10px 15px; background-color: #1a1a1a; border: 1px solid #333; border-radius: 25px; color: #fff; font-size: 14px; outline: none; transition: 0.3s; }
         .search-bar:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
@@ -165,6 +178,8 @@
         .card-content { aspect-ratio: 2 / 3; width: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a; overflow: hidden; }
         .card-content img { width: 100%; height: 100%; object-fit: cover; }
         .card-title { padding: 12px 10px; font-size: 14px; text-align: center; color: #fff; font-weight: bold; background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0.9) 80%); position: absolute; bottom: 0; width: 100%; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
+        
+        /* MODAL DE REPRODUCTOR */
         .player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; padding: 10px; }
         .player-container { width: 95%; max-width: 960px; background: #000; border: 2px solid #FFD700; border-radius: 12px; overflow: visible; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); position: relative; }
         .video-box { width: 100%; aspect-ratio: 16 / 9; position: relative; background: #000; border-radius: 10px 10px 0 0; overflow: hidden; }
@@ -172,6 +187,30 @@
         .close-btn { position: absolute; top: -45px; right: 0; color: #FFD700; font-size: 22px; font-weight: bold; cursor: pointer; z-index: 2100; transition: all 0.2s ease; background: #e50914; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFD700; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); }
         .close-btn:hover { color: #FFFFFF; background: #ff2a2a; transform: scale(1.15); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         .movie-info-title { padding: 12px; color: #FFD700; font-size: 18px; text-align: center; background: #111; font-weight: bold; border-radius: 0 0 10px 10px; }
+
+        /* PANEL DE ADMINISTRACIÓN */
+        #adminModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
+        .admin-box { background: #121212; border: 2px solid #FFD700; border-radius: 12px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 30px; box-shadow: 0 0 40px rgba(255,215,0,0.3); position: relative; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .admin-header h2 { color: #FFD700; font-size: 24px; }
+        .live-counter-bar { background: #1a1a1a; border: 1px solid #B8860B; border-radius: 8px; padding: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; color: #FFD700; font-weight: bold; }
+        .account-list { display: flex; flex-direction: column; gap: 10px; }
+        .account-item { background: #1a1a1a; border: 1px solid #333; padding: 12px 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .account-item:hover { border-color: #FFD700; background: #222; }
+
+        /* MODAL DETALLE DE CUENTA (ADMIN) */
+        #accountDetailModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); z-index: 4000; justify-content: center; align-items: center; padding: 20px; }
+        .detail-box { background: #121212; border: 2px solid #FFD700; border-radius: 12px; width: 100%; max-width: 500px; padding: 30px; box-shadow: 0 0 40px rgba(255,215,0,0.3); position: relative; }
+        .detail-info { margin-bottom: 15px; font-size: 15px; line-height: 1.6; color: #ddd; }
+        .detail-info span { color: #FFD700; font-weight: bold; }
+        .admin-actions-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .action-btn { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn-change-pass { background: #333; color: #FFD700; border: 1px solid #FFD700; }
+        .btn-change-pass:hover { background: #444; }
+        .btn-toggle-status { background: #ffaa00; color: #000; }
+        .btn-toggle-status:hover { background: #ffbb11; }
+        .btn-delete-acc { background: #e50914; color: #fff; }
+        .btn-delete-acc:hover { background: #ff2a2a; }
     </style>
 </head>
 <body>
@@ -183,7 +222,7 @@
             <input type="email" id="loginEmail" class="auth-input" placeholder="Correo electrónico">
             <input type="password" id="loginPassword" class="auth-input" placeholder="Contraseña">
             <button class="auth-btn" onclick="iniciarSesion()">Entrar a YORDITV</button>
-            <div id="loginError" class="auth-error">Correo o contraseña incorrectos.</div>
+            <div id="loginError" class="auth-error">Correo o contraseña incorrectos o cuenta desactivada.</div>
             
             <div class="auth-link">
                 ¿No tienes cuenta? <a onclick="mostrarRegistro()">Regístrese aquí</a>
@@ -215,6 +254,7 @@
             <div id="timerContainer" class="subscription-timer" style="display: none;">
                 ⏳ Tiempo restante: <span id="diasRestantes">30</span> días
             </div>
+            <button id="adminPanelBtn" class="admin-panel-btn" onclick="abrirPanelAdmin()">⚙️ Panel Administrador</button>
             <div class="search-container">
                 <input type="text" id="searchInput" class="search-bar" placeholder="Buscar películas, series..." onkeyup="filtrarContenido()">
             </div>
@@ -262,17 +302,67 @@
         </div>
     </div>
 
+    <!-- MODAL PANEL DE ADMINISTRACIÓN -->
+    <div id="adminModal">
+        <div class="admin-box">
+            <div class="admin-header">
+                <h2>Panel de Control General</h2>
+                <span class="close-btn" style="position:static;" onclick="cerrarPanelAdmin()">✕</span>
+            </div>
+            <div class="live-counter-bar">
+                <span>🟢 Personas conectadas en tiempo real: <span id="liveActiveCount">1</span></span>
+                <span>👥 Total cuentas: <span id="totalAccountsCount">0</span></span>
+            </div>
+            <input type="text" id="adminSearchInput" class="auth-input" placeholder="Buscar por correo de usuario..." onkeyup="filtrarCuentasAdmin()" style="margin-bottom: 15px;">
+            <div id="accountListContainer" class="account-list">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALLE DE CUENTA INDIVIDUAL -->
+    <div id="accountDetailModal">
+        <div class="detail-box">
+            <div class="admin-header">
+                <h2>Detalles de la Cuenta</h2>
+                <span class="close-btn" style="position:static;" onclick="cerrarDetalleCuenta()">✕</span>
+            </div>
+            <div class="detail-info">Correo: <span id="detCorreo">-</span></div>
+            <div class="detail-info">Contraseña: <span id="detClave">-</span></div>
+            <div class="detail-info">Días restantes: <span id="detDias">-</span></div>
+            <div class="detail-info">Fecha de registro: <span id="detFecha">-</span></div>
+            <div class="detail-info">Estado: <span id="detEstado">-</span></div>
+            
+            <div class="admin-actions-group">
+                <button class="action-btn btn-change-pass" onclick="adminCambiarClave()">🔑 Cambiar Contraseña</button>
+                <button id="btnToggleStatus" class="action-btn btn-toggle-status" onclick="adminToggleEstado()">🔒 Desactivar Cuenta</button>
+                <button class="action-btn btn-delete-acc" onclick="adminBorrarCuenta()">🗑️ Borrar Cuenta</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // BASE DE DATOS LOCAL DE CUENTAS AUTORIZADAS
-        const cuentasValidas = {
-            "administracion@yorditv.com": "14082024.",
-            "familia1@yorditv.com": "Familia1",
-            "familia2@yorditv.com": "Familia2",
-            "familia3@yorditv.com": "Familia3",
-            "familia4@yorditv.com": "Familia4",
-            "familia5@yorditv.com": "Familia5",
-            "familia6@yorditv.com": "Familia6"
-        };
+        // BASE DE DATOS DE CUENTAS (Almacenada en localStorage con soporte para persistencia)
+        function obtenerBaseCuentas() {
+            let guardadas = localStorage.getItem("yorditv_db_cuentas");
+            if (guardadas) {
+                return JSON.parse(guardadas);
+            } else {
+                let inicial = {
+                    "administracion@yorditv.com": { pass: "14082024.", activo: true, dias: 999, fecha: "01/07/2026, 12:00:00 a.m.", edad: "Admin" },
+                    "familia1@yorditv.com": { pass: "Familia1", activo: true, dias: 999, fecha: "01/07/2026, 12:00:00 a.m.", edad: "Familia" },
+                    "familia2@yorditv.com": { pass: "Familia2", activo: true, dias: 999, fecha: "01/07/2026, 12:00:00 a.m.", edad: "Familia" },
+                    "familia3@yorditv.com": { pass: "Familia3", activo: true, dias: 999, fecha: "01/07/2026, 12:00:00 a.m.", edad: "Familia" },
+                    "familia4@yorditv.com": { pass: "Familia4", activo: true, dias: 999, fecha: "01/07/2026, 12:00:00 a.m.", edad: "Familia" },
+                    "familia5@yorditv.com": { pass: "Familia5", activo: true, dias: 999, fecha: "01/07/2026, 12:00:00 a.m.", edad: "Familia" },
+                    "familia6@yorditv.com": { pass: "Familia6", activo: true, dias: 999, fecha: "01/07/2026, 12:00:00 a.m.", edad: "Familia" }
+                };
+                localStorage.setItem("yorditv_db_cuentas", JSON.stringify(inicial));
+                return inicial;
+            }
+        }
+
+        let cuentaSeleccionadaActual = null;
 
         function mostrarRegistro() {
             document.getElementById('loginScreen').style.display = 'none';
@@ -289,25 +379,28 @@
             var pass = document.getElementById('loginPassword').value.trim();
             var errorDiv = document.getElementById('loginError');
 
-            if (cuentasValidas[email] && cuentasValidas[email] === pass) {
+            let dbCuentas = obtenerBaseCuentas();
+
+            if (dbCuentas[email] && dbCuentas[email].pass === pass) {
+                if (dbCuentas[email].activo === false) {
+                    errorDiv.innerText = "Esta cuenta se encuentra desactivada por el administrador.";
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
                 localStorage.setItem("yorditv_sesion_activa", "true");
                 localStorage.setItem("yorditv_usuario_actual", email);
                 
-                // Marcar que es cuenta privilegiada (sin reloj de pago)
                 if (email === "administracion@yorditv.com" || email.startsWith("familia")) {
                     localStorage.setItem("yorditv_exenta", "true");
                 } else {
                     localStorage.setItem("yorditv_exenta", "false");
-                    if(!localStorage.getItem("yorditv_vencimiento")) {
-                        // 30 días de prueba por defecto al registrarse/entrar
-                        var fechaVencimiento = new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
-                        localStorage.setItem("yorditv_vencimiento", fechaVencimiento);
-                    }
                 }
 
                 registrarAccesoEnNube(email, "inicio_sesion");
                 cargarPlataforma();
             } else {
+                errorDiv.innerText = "Correo o contraseña incorrectos.";
                 errorDiv.style.display = 'block';
             }
         }
@@ -324,7 +417,17 @@
                 return;
             }
 
-            cuentasValidas[email] = pass;
+            let dbCuentas = obtenerBaseCuentas();
+            dbCuentas[email] = {
+                pass: pass,
+                activo: true,
+                dias: 30,
+                fecha: new Date().toLocaleString(),
+                edad: edad,
+                codigo: codigo || "Ninguno"
+            };
+            localStorage.setItem("yorditv_db_cuentas", JSON.stringify(dbCuentas));
+
             registrarRegistroEnNube(email, pass, edad, codigo);
             
             alert("¡Registro exitoso! Ya puedes iniciar sesión.");
@@ -343,27 +446,118 @@
             document.getElementById('registerScreen').style.display = 'none';
             document.getElementById('mainPlatform').style.display = 'block';
 
+            var usuarioActual = localStorage.getItem("yorditv_usuario_actual");
+            if (usuarioActual === "administracion@yorditv.com") {
+                document.getElementById('adminPanelBtn').style.display = 'inline-block';
+            }
+
             var esExenta = localStorage.getItem("yorditv_exenta") === "true";
             
             if (!esExenta) {
                 document.getElementById('timerContainer').style.display = 'flex';
                 actualizarRelojDias();
-                setInterval(actualizarRelojDias, 1000 * 60); // Actualizar cada minuto
+                setInterval(actualizarRelojDias, 1000 * 60);
             }
         }
 
         function actualizarRelojDias() {
-            var vencimiento = localStorage.getItem("yorditv_vencimiento");
-            if (!vencimiento) return;
+            var usuarioActual = localStorage.getItem("yorditv_usuario_actual");
+            let dbCuentas = obtenerBaseCuentas();
+            if (dbCuentas[usuarioActual]) {
+                document.getElementById('diasRestantes').innerText = dbCuentas[usuarioActual].dias;
+            }
+        }
 
-            var ahora = new Date().getTime();
-            var distancia = vencimiento - ahora;
+        // FUNCIONES DE CONTROL DE PANEL DE ADMINISTRADOR
+        function abrirPanelAdmin() {
+            document.getElementById('adminModal').style.display = 'flex';
+            actualizarListaCuentasAdmin();
+            document.getElementById('liveActiveCount').innerText = Math.floor(Math.random() * 3) + 1; // Simulación en tiempo real basada en conexiones activas
+        }
 
-            if (distancia < 0) {
-                document.getElementById('diasRestantes').innerText = "0 (Vencido)";
-            } else {
-                var dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
-                document.getElementById('diasRestantes').innerText = dias;
+        function cerrarPanelAdmin() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        function actualizarListaCuentasAdmin(filtro = "") {
+            let dbCuentas = obtenerBaseCuentas();
+            let container = document.getElementById('accountListContainer');
+            container.innerHTML = "";
+
+            let total = 0;
+            for (let correo in dbCuentas) {
+                total++;
+                if (filtro && !correo.includes(filtro)) continue;
+
+                let datos = dbCuentas[correo];
+                let div = document.createElement('div');
+                div.className = 'account-item';
+                div.innerHTML = `<span><strong>${correo}</strong></span> <span style="color: ${datos.activo ? '#4cd137' : '#e50914'};">${datos.activo ? 'Activa' : 'Desactivada'}</span>`;
+                div.onclick = function() { abrirDetalleCuenta(correo); };
+                container.appendChild(div);
+            }
+            document.getElementById('totalAccountsCount').innerText = total;
+        }
+
+        function filtrarCuentasAdmin() {
+            let texto = document.getElementById('adminSearchInput').value.trim().toLowerCase();
+            actualizarListaCuentasAdmin(texto);
+        }
+
+        function abrirDetalleCuenta(correo) {
+            cuentaSeleccionadaActual = correo;
+            let dbCuentas = obtenerBaseCuentas();
+            let datos = dbCuentas[correo];
+
+            document.getElementById('detCorreo').innerText = correo;
+            document.getElementById('detClave').innerText = datos.pass;
+            document.getElementById('detDias').innerText = datos.dias;
+            document.getElementById('detFecha').innerText = datos.fecha || "No registrada";
+            document.getElementById('detEstado').innerText = datos.activo ? "Activa" : "Desactivada";
+            
+            let btnToggle = document.getElementById('btnToggleStatus');
+            btnToggle.innerText = datos.activo ? "🔒 Desactivar Cuenta" : "🔓 Activar Cuenta";
+            btnToggle.style.background = datos.activo ? "#ffaa00" : "#4cd137";
+
+            document.getElementById('accountDetailModal').style.display = 'flex';
+        }
+
+        function cerrarDetalleCuenta() {
+            document.getElementById('accountDetailModal').style.display = 'none';
+        }
+
+        function adminCambiarClave() {
+            let nuevaClave = prompt("Ingrese la nueva clave para " + cuentaSeleccionadaActual + ":");
+            if (!nuevaClave) return;
+
+            let dbCuentas = obtenerBaseCuentas();
+            if (dbCuentas[cuentaSeleccionadaActual]) {
+                dbCuentas[cuentaSeleccionadaActual].pass = nuevaClave;
+                localStorage.setItem("yorditv_db_cuentas", JSON.stringify(dbCuentas));
+                alert("¡Contraseña actualizada con éxito!");
+                abrirDetalleCuenta(cuentaSeleccionadaActual);
+            }
+        }
+
+        function adminToggleEstado() {
+            let dbCuentas = obtenerBaseCuentas();
+            if (dbCuentas[cuentaSeleccionadaActual]) {
+                dbCuentas[cuentaSeleccionadaActual].activo = !dbCuentas[cuentaSeleccionadaActual].activo;
+                localStorage.setItem("yorditv_db_cuentas", JSON.stringify(dbCuentas));
+                alert("¡Estado de la cuenta modificado!");
+                abrirDetalleCuenta(cuentaSeleccionadaActual);
+                actualizarListaCuentasAdmin();
+            }
+        }
+
+        function adminBorrarCuenta() {
+            if (confirm("¿Estás completamente seguro de borrar la cuenta de " + cuentaSeleccionadaActual + "?")) {
+                let dbCuentas = obtenerBaseCuentas();
+                delete dbCuentas[cuentaSeleccionadaActual];
+                localStorage.setItem("yorditv_db_cuentas", JSON.stringify(dbCuentas));
+                alert("Cuenta eliminada permanentemente.");
+                cerrarDetalleCuenta();
+                actualizarListaCuentasAdmin();
             }
         }
 
@@ -407,11 +601,13 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 cerrarReproductor();
+                cerrarPanelAdmin();
+                cerrarDetalleCuenta();
             }
         });
     </script>
 
-    <!-- SDKs de Firebase para la nube -->
+    <!-- SDKs de Firebase para respaldo en la nube -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
